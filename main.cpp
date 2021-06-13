@@ -12,14 +12,14 @@ int main()
     std::vector<std::unique_ptr<Bullet>> bullets;
 
     //Player
-    Player player(100.0, 200.0, 100.00, 100.0, "character");
+    Player player(10.0, 520.0, 100.00, 100.0, "robot");
     player.setPos();
     player.setText();
 
     //Walls
     auto wall1 = std::make_unique<Wall>(0, 550, "wall");
-    auto wall2 = std::make_unique<Wall>(400.0, 250.0, "wall");
-    auto wall3 = std::make_unique<Wall>(400.0, 550.0, "wall");
+    auto wall2 = std::make_unique<Wall>(0.0, 0.0, "wall");
+    auto wall3 = std::make_unique<Wall>(250.0, 450.0, "wall");
 
     auto enemy1 = std::make_unique<Enemy>(500.0, 100.0, "duch");
     auto enemy2 = std::make_unique<Enemy>(500.0, 130.0, "duch");
@@ -55,18 +55,18 @@ int main()
                 window.close();
            player.shoot(bullets, event);
         }
-
-        //LOGIC
         float time = clock.getElapsedTime().asSeconds();
         clock.restart();
         window.clear(sf::Color::Black);
 
+        //LOGIC
         player.control(time, objects);
         player.step(time);
 
         for(auto &rec : bullets){
             rec -> fired(time);
             rec -> collision(bullets, objects);
+            rec -> step(time);
         }
 
         //DRAW
