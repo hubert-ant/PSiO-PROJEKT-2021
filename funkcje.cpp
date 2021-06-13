@@ -14,7 +14,7 @@ void AnimatedSprite::setPos(){
     setPosition(x_, y_);
 }
 
-void AnimatedSprite::add_animation_frame(const sf::IntRect &rectangle, std::vector<sf::IntRect> &animated){
+void AnimatedSprite::addAnimationFrame(const sf::IntRect &rectangle, std::vector<sf::IntRect> &animated){
     animated.emplace_back(rectangle);
 }
 
@@ -24,11 +24,13 @@ Player::Player(double x, double y, double vel_x, double vel_y, const std::string
     vel_x_ = vel_x;
     vel_y_ = vel_y;
     filename_ = filename;
-    movingRight_ = true;
+    moving_right_ = true;
     frames_ = 3;
     current_frame_index_ = 0;
     sec_ = 0;
-    acceleration = 2.0;
+    acceleration_ = 2;
+    moving_up_ = false;
+    moving_down_ = false;
 }
 
 Wall::Wall(double x, double y, const std::string &filename){
@@ -48,79 +50,111 @@ Bullet::Bullet(double x, double y, const std::string &filename){
     y_ = y;
     filename_ = filename;
     vel_x_ = 200;
+    frames_ = 5;
+    current_frame_index_ = 0;
+    sec_ = 0;
 }
 
 void Player::movingLeft(){
-    movingLeft_ = true;
-    movingRight_ = false;
+    moving_left_ = true;
+    moving_right_ = false;
 }
 
 void Player::movingRight(){
-    movingLeft_ = false;
-    movingRight_ = true;
+    moving_left_ = false;
+    moving_right_ = true;
 }
 
 void Bullet::movingLeft(){
-    movingLeft_ = true;
+    moving_left_ = true;
 }
 
 void Bullet::movingRight(){
-    movingRight_ = true;
+    moving_right_ = true;
 }
-
 
 void Player::control(float &time, std::vector<std::unique_ptr<AnimatedSprite>> &vec){
-    if(objects_collision(vec)){
-        setPosition(oldpos_x_, oldpos_y_);
+    horizontal_collision_ = false;
+    vertical_collision_ = false;
+    next_pos_y_ = vel_y_ * time;
+    for(const auto &rec : vec){
+        if(verticalCollison(next_pos_y_, rec)){
+            vertical_collision_ = true;
+        }
+        if(horizontalCollison(next_pos_x_, rec)){
+            horizontal_collision_ = true;
+        }
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+        next_pos_x_ = -vel_x_ * time;
+        this ->movingLeft();
+    }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+        next_pos_x_ = vel_x_ * time;
+        this ->movingRight();
     }else{
-        oldpos_x_ = getPosition().x;
-        oldpos_y_ = getPosition().y;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-            distance_y_ = -vel_y_ * time;
-            move(0, distance_y_);
+        next_pos_x_ = 0;
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) ){
+        moving_up_ = true;
+    }
+    if(!moving_up_){
+        if(!vertical_collision_){
+           move(0, next_pos_y_);
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-            distance_x_ = -vel_x_ * time;
-            this ->movingLeft();
-            move(distance_x_, 0);
+    }else{
+        move(0, -next_pos_y_);
+        distance_jump_ += next_pos_y_;
+        if(vertical_collision_ || distance_jump_ > 150){
+           moving_up_ = false;
+           distance_jump_ = 0;
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-            distance_y_ = vel_y_ * time;
-            move(0, distance_y_);
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-            distance_x_ = vel_x_ * time;
-            this ->movingRight();
-            move(distance_x_, 0);
-        }
+    }
+    if(!horizontal_collision_){
+        move(next_pos_x_, 0);
     }
 }
 
-bool Player::objects_collision(std::vector<std::unique_ptr<AnimatedSprite>> &vec){
-    for(auto &el : vec){
-        if(this -> getGlobalBounds().intersects(el -> getGlobalBounds())){
-            std::cout<<"CCCCCCCCCCC"<<std::endl;
-            return true;
-        }
+bool Player::verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object){
+    if(getGlobalBounds().top + getGlobalBounds().height + next_pos_y >= object->getGlobalBounds().top &&
+            getGlobalBounds().top + next_pos_y <= object->getGlobalBounds().top + object->getGlobalBounds().height &&
+            !(getGlobalBounds().left >= object->getGlobalBounds().left + object->getGlobalBounds().width ||
+            getGlobalBounds().left + getGlobalBounds().width <= object->getGlobalBounds().left)){
+        return true;
     }
-    std::cout<<"AAAAAAAAAAA"<<std::endl;
+    return false;
+}
+
+bool Player::horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object){
+    if(getGlobalBounds().left + next_pos_x <= object->getGlobalBounds().left + object->getGlobalBounds().width &&
+            getGlobalBounds().left + getGlobalBounds().width + next_pos_x >= object->getGlobalBounds().left &&
+            !(getGlobalBounds().top >= object->getGlobalBounds().height + object->getGlobalBounds().top ||
+            getGlobalBounds().top + getGlobalBounds().height <= object->getGlobalBounds().top)){
+        return true;
+    }
     return false;
 }
 
 void Player::shoot(std::vector<std::unique_ptr<Bullet>> &vec, sf::Event &event){
     if (event.type == sf::Event::MouseButtonPressed) {
         if(event.mouseButton.button == sf::Mouse::Left){
-            float right = this->getGlobalBounds().left + this->getGlobalBounds().width;
-            float y = this->getGlobalBounds().top + (this->getGlobalBounds().height/2);
-            auto bullet = std::make_unique<Bullet>(right, y, "owoc");
-            if(this -> movingRight_){
+            float x, y;
+            if(this->moving_right_){
+                x = this->getGlobalBounds().left + this->getGlobalBounds().width;
+            }else{
+                x = this->getGlobalBounds().left;
+            }
+            y = this->getGlobalBounds().top + (this->getGlobalBounds().height/2);
+            auto bullet = std::make_unique<Bullet>(x, y, "bullet");
+            if(this -> moving_right_){
                 bullet -> movingRight();
             }
-            if(this -> movingLeft_){
+            if(this -> moving_left_){
                 bullet -> movingLeft();
             }
             bullet->setPos();
             bullet->setText();
+            bullet->setFrames();
+            bullet->mirror();
             vec.emplace_back(std::move(bullet));
         }
     }
@@ -128,17 +162,17 @@ void Player::shoot(std::vector<std::unique_ptr<Bullet>> &vec, sf::Event &event){
 
 void Bullet::fired(float &time){
     float distance = vel_x_ * time;
-    if(movingLeft_){
+    if(moving_left_){
         move(-distance, 0);
     }
-    if(movingRight_){
+    if(moving_right_){
         move(distance, 0);
     }
 }
 
-void Bullet::collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &vec){
+void Bullet::collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects){
     for(auto &bull : bullets){
-        for(auto &el : vec){
+        for(auto &el : objects){
             Enemy *enemy = dynamic_cast<Enemy*>(el.get());
             if(bull->getGlobalBounds().intersects(el->getGlobalBounds())){
                 if(enemy != nullptr){
@@ -153,13 +187,15 @@ void Bullet::collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vecto
 }
 
 void Player::setFrames(){
-    this -> add_animation_frame(sf::IntRect(0, 0, 37, 37), animated_character_);
-    //this -> add_animation_frame(sf::IntRect(50, 0, 37, 37));
-    //this -> add_animation_frame(sf::IntRect(100, 0, 37, 37));
-    //this -> add_animation_frame(sf::IntRect(150, 0, 37, 37));
-    this -> add_animation_frame(sf::IntRect(250, 0, 37, 37), animated_walking_);
-    this -> add_animation_frame(sf::IntRect(300, 0, 37, 37), animated_walking_);
-    this -> add_animation_frame(sf::IntRect(350, 0, 37, 37), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(0, 0, 567, 556), animated_character_);
+    this -> addAnimationFrame(sf::IntRect(567, 0, 567, 556), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(1134, 0, 567, 556), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(1701, 0, 567, 556), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(2268, 0, 567, 556), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(2835, 0, 567, 556), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(3402, 0, 567, 556), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(3969, 0, 567, 556), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(4536, 0, 567, 556), animated_walking_);
 }
 
 void Player::mirror(){
@@ -167,17 +203,16 @@ void Player::mirror(){
     float origin_x = temp.width;
     float origin_y = temp.height;
     setOrigin(origin_x/2, origin_y/2);
-    if(movingRight_ == true){
-        setScale(1, 1);
+    if(moving_right_ == true){
+        setScale(0.1, 0.1);
     }
-    if(movingLeft_ == true){
-        setScale(-1, 1);
+    if(moving_left_ == true){
+        setScale(-0.1, 0.1);
     }
 }
 
 bool Player::moving(){
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
-            sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
        return true;
     }
     return false;
@@ -202,23 +237,36 @@ void Player::step(float &time){
     }
 }
 
-void Player::gravity(float &time, std::vector<std::unique_ptr<AnimatedSprite>> &vec){
-    for(auto &el : vec){
-        Wall *wall = dynamic_cast<Wall*>(el.get());
-        if(wall != nullptr){
-            if(this->getGlobalBounds().intersects(wall->getGlobalBounds())){
-                //this -> control(time, vec);
-                //break;
-            }else{
-                old_pos_x_gravity_ = getPosition().x;
-                old_pos_y_gravity_ = getPosition().y;
-                if(objects_collision(vec)){
-                    setPosition(old_pos_x_gravity_, old_pos_y_gravity_);
-                }
-                float distance_y = acceleration * vel_y_;
-                move(0, distance_y);
-                //break;
-            }
+void Bullet::mirror(){
+    sf::IntRect temp = animated_walking_[0];
+    float origin_x = temp.width;
+    float origin_y = temp.height;
+    setOrigin(origin_x/2, origin_y/2);
+    if(moving_right_ == true){
+        setScale(0.1, 0.1);
+    }
+    if(moving_left_ == true){
+        setScale(-0.1, 0.1);
+    }
+}
+
+void Bullet::setFrames(){
+    this -> addAnimationFrame(sf::IntRect(0, 0, 172, 139), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(172, 0, 172, 139), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(344, 0, 172, 139), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(516, 0, 172, 139), animated_walking_);
+    this -> addAnimationFrame(sf::IntRect(688, 0, 172, 139), animated_walking_);
+}
+
+void Bullet::step(float &time){
+    sec_ += time;
+    if(sec_ >= 1.0/frames_){
+        setTextureRect(animated_walking_[current_frame_index_]);
+        if(current_frame_index_ >= animated_walking_.size() - 1){
+            current_frame_index_ = 0;
+        }else{
+            current_frame_index_++;
         }
+        sec_ = 0;
     }
 }
