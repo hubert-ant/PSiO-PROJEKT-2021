@@ -1,11 +1,17 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include <iostream>
-#include <vector>
-#include "klasy.h"
 
-int main()
-{
+#include <vector>
+
+#include "AnimatedSprite.h"
+#include "Bullet.h"
+#include "Enemy.h"
+#include "Player.h"
+#include "Wall.h"
+#include "Bonus.h"
+
+int main() {
+
     sf::RenderWindow window(sf::VideoMode(800, 600), "Zombie Game");
     sf::Clock clock;
     std::vector<std::unique_ptr<AnimatedSprite>> objects;
@@ -21,9 +27,9 @@ int main()
     auto wall2 = std::make_unique<Wall>(0.0, 0.0, "wall");
     auto wall3 = std::make_unique<Wall>(250.0, 450.0, "wall");
 
-    auto enemy1 = std::make_unique<Enemy>(500.0, 100.0, "duch");
-    auto enemy2 = std::make_unique<Enemy>(500.0, 130.0, "duch");
-    auto enemy3 = std::make_unique<Enemy>(500.0, 180.0, "duch");
+    auto enemy1 = std::make_unique<Enemy>(500.0, 300.0, "duch");
+    auto enemy2 = std::make_unique<Enemy>(600.0, 300.0, "duch");
+    auto enemy3 = std::make_unique<Enemy>(700.0, 300.0, "duch");
 
     enemy1->setPos();
     enemy2->setPos();
@@ -50,10 +56,11 @@ int main()
     while (window.isOpen()) {
         //EVENTS
         sf::Event event;
-        while(window.pollEvent(event)) {
-           if(event.type == sf::Event::Closed)
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
                 window.close();
-           player.shoot(bullets, event);
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+                player.shoot(bullets);
         }
         float time = clock.getElapsedTime().asSeconds();
         clock.restart();
@@ -63,17 +70,17 @@ int main()
         player.control(time, objects);
         player.step(time);
 
-        for(auto &rec : bullets){
-            rec -> fired(time);
-            rec -> collision(bullets, objects);
-            rec -> step(time);
+        for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
+            (*bullet)->fired(time);
+            (*bullet)->step(time);
+            (*bullet)->collision(bullets, objects);
         }
 
         //DRAW
-        for(auto &rec : objects){
+        for (auto &rec : objects) {
             window.draw(*rec);
         }
-        for(auto &rec : bullets){
+        for (auto &rec : bullets) {
             window.draw(*rec);
         }
         window.draw(player);
