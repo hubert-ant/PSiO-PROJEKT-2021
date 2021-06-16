@@ -12,44 +12,19 @@
 
 int main() {
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Zombie Game");
+    sf::RenderWindow window(sf::VideoMode(1400, 1000), "Zombie Game");
     sf::Clock clock;
     std::vector<std::unique_ptr<AnimatedSprite>> objects;
     std::vector<std::unique_ptr<Bullet>> bullets;
 
     //Player
-    Player player(10.0, 520.0, 100.00, 100.0, "robot");
+    Player player(10.0, 520.0, 100.00, 100.0, "gunner");
     player.setPos();
     player.setText();
 
-    //Walls
-    auto wall1 = std::make_unique<Wall>(0, 550, "wall");
-    auto wall2 = std::make_unique<Wall>(0.0, 0.0, "wall");
-    auto wall3 = std::make_unique<Wall>(250.0, 450.0, "wall");
-
-    auto enemy1 = std::make_unique<Enemy>(500.0, 300.0, "duch");
-    auto enemy2 = std::make_unique<Enemy>(600.0, 300.0, "duch");
-    auto enemy3 = std::make_unique<Enemy>(700.0, 300.0, "duch");
-
-    enemy1->setPos();
-    enemy2->setPos();
-    enemy3->setPos();
-    enemy1->setText();
-    enemy2->setText();
-    enemy3->setText();
-    objects.emplace_back(move(enemy1));
-    objects.emplace_back(move(enemy2));
-    objects.emplace_back(move(enemy3));
-
-    wall1->setPos();
-    wall2->setPos();
-    wall3->setPos();
-    wall1->setText();
-    wall2->setText();
-    wall3->setText();
-    objects.emplace_back(move(wall1));
-    objects.emplace_back(move(wall2));
-    objects.emplace_back(move(wall3));
+    //Walls & enemies
+    Wall::setWall(objects);
+    Enemy::setEnemies(objects);
 
     //loop
     window.setFramerateLimit(60);

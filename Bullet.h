@@ -29,7 +29,7 @@ Bullet::Bullet(double x, double y, const std::string &filename) {
     vel_x_ = 200;
     frames_ = 5;
     current_frame_index_ = 0;
-    sec_ = 0;
+    sec_walking_ = 0;
 }
 
 void Bullet::movingLeft() {
@@ -62,7 +62,7 @@ void Bullet::setFrames() {
 }
 
 void Bullet::step(float &time) {
-    if (sec_ == 0) {
+    if (sec_walking_ == 0) {
         setTextureRect(animated_walking_[current_frame_index_]);
         if (current_frame_index_ >= animated_walking_.size() - 1) {
             current_frame_index_ = 0;
@@ -70,9 +70,9 @@ void Bullet::step(float &time) {
             current_frame_index_++;
         }
     }
-    sec_ += time;
-    if (sec_ >= 1.0 / frames_) {
-        sec_ = 0;
+    sec_walking_ += time;
+    if (sec_walking_ >= 1.0 / frames_) {
+        sec_walking_ = 0;
     }
 }
 

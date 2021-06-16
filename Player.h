@@ -26,8 +26,10 @@ public:
     bool verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object);
     bool horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object);
 protected:
-    double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
+    double acceleration_, distance_jump_, next_pos_x_, next_pos_y_, sec_staying_;
     bool horizontal_collision_, vertical_collision_, moving_up_, moving_down_;
+    int frames_staying_ = 0, current_frame_index_staying_ = 0;
+    std::vector<sf::IntRect> animated_jumping_;
 };
 
 Player::Player(double x, double y, double vel_x, double vel_y, const std::string &filename) {
@@ -37,9 +39,12 @@ Player::Player(double x, double y, double vel_x, double vel_y, const std::string
     vel_y_ = vel_y;
     filename_ = filename;
     moving_right_ = true;
-    frames_ = 3;
+    frames_ = 6;
+    frames_staying_ = 5;
     current_frame_index_ = 0;
-    sec_ = 0;
+    current_frame_index_staying_ = 0;
+    sec_walking_ = 0;
+    sec_staying_ = 0;
     acceleration_ = 100;
     moving_up_ = false;
     moving_down_ = false;
@@ -148,15 +153,27 @@ void Player::shoot(std::vector<std::unique_ptr<Bullet>> &vec) {
 }
 
 void Player::setFrames() {
-    this->addAnimationFrame(sf::IntRect(0, 0, 567, 556), animated_character_);
-    this->addAnimationFrame(sf::IntRect(567, 0, 567, 556), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(1134, 0, 567, 556), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(1701, 0, 567, 556), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(2268, 0, 567, 556), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(2835, 0, 567, 556), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(3402, 0, 567, 556), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(3969, 0, 567, 556), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(4536, 0, 567, 556), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(0, 0, 567, 556), animated_character_);
+//    this->addAnimationFrame(sf::IntRect(567, 0, 567, 556), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(1134, 0, 567, 556), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(1701, 0, 567, 556), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(2268, 0, 567, 556), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(2835, 0, 567, 556), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(3402, 0, 567, 556), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(3969, 0, 567, 556), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(4536, 0, 567, 556), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(0, 0, 48, 40), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(48, 0, 48, 40), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(96, 0, 48, 40), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(144, 0, 48, 40), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(192, 0, 48, 40), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(240, 0, 48, 40), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(288, 0, 48, 40), animated_character_);
+    this->addAnimationFrame(sf::IntRect(336, 0, 48, 40), animated_character_);
+    this->addAnimationFrame(sf::IntRect(384, 0, 48, 40), animated_character_);
+    this->addAnimationFrame(sf::IntRect(432, 0, 48, 40), animated_character_);
+    this->addAnimationFrame(sf::IntRect(480, 0, 48, 40), animated_character_);
+    this->addAnimationFrame(sf::IntRect(576, 0, 48, 40), animated_jumping_);
 }
 
 void Player::mirror() {
@@ -165,10 +182,10 @@ void Player::mirror() {
     float origin_y = temp.height;
     setOrigin(origin_x / 2, origin_y / 2);
     if (moving_right_ == true) {
-        setScale(0.1, 0.1);
+        setScale(1, 1);
     }
     if (moving_left_ == true) {
-        setScale(-0.1, 0.1);
+        setScale(-1, 1);
     }
 }
 
@@ -180,22 +197,44 @@ bool Player::moving() {
 }
 
 void Player::step(float &time) {
-    sec_ += time;
     setFrames();
     mirror();
-    if (!moving()) {
-        setTextureRect(animated_character_[0]);
-    } else {
-        if (sec_ >= 1.0 / frames_) {
-            setTextureRect(animated_walking_[current_frame_index_]);
-            if (current_frame_index_ >= animated_walking_.size() - 1) {
-                current_frame_index_ = 0;
-            } else {
-                current_frame_index_++;
+    if(vertical_collision_){
+        if (!moving()) {
+            if (sec_staying_ == 0) {
+                setTextureRect(animated_character_[current_frame_index_staying_]);
+                if (current_frame_index_staying_ >= animated_character_.size() - 1) {
+                    current_frame_index_staying_ = 0;
+                } else {
+                    current_frame_index_staying_++;
+                }
             }
-            sec_ = 0;
+            sec_staying_ += time;
+            if (sec_staying_ >= 1.0 / frames_staying_) {
+                sec_staying_ = 0;
+            }
+            sec_walking_ = 0;
+        }else {
+            if (sec_walking_ == 0) {
+                setTextureRect(animated_walking_[current_frame_index_]);
+                if (current_frame_index_ >= animated_walking_.size() - 1) {
+                    current_frame_index_ = 0;
+                } else {
+                    current_frame_index_++;
+                }
+            }
+            sec_walking_ += time;
+            if (sec_walking_ >= 1.0 / frames_) {
+                sec_walking_ = 0;
+            }
+            sec_staying_ = 0;
         }
+    }else{
+        setTextureRect(animated_jumping_[0]);
+        sec_staying_ = 0;
+        sec_walking_ = 0;
     }
+
 }
 
 #endif // PLAYER_H
