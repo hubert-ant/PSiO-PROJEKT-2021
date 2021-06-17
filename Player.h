@@ -27,7 +27,7 @@ public:
     bool horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object);
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_, sec_staying_;
-    bool horizontal_collision_, vertical_collision_, moving_up_, moving_down_;
+    bool horizontal_collision_, vertical_collision_, moving_up_;
     int frames_staying_ = 0, current_frame_index_staying_ = 0;
     std::vector<sf::IntRect> animated_jumping_;
 };
@@ -45,9 +45,8 @@ Player::Player(double x, double y, double vel_x, double vel_y, const std::string
     current_frame_index_staying_ = 0;
     sec_walking_ = 0;
     sec_staying_ = 0;
-    acceleration_ = 100;
+    acceleration_ = 10;
     moving_up_ = false;
-    moving_down_ = false;
 }
 
 void Player::movingLeft() {
@@ -63,8 +62,7 @@ void Player::movingRight() {
 void Player::control(float &time, std::vector<std::unique_ptr<AnimatedSprite>> &vec) {
     horizontal_collision_ = false;
     vertical_collision_ = false;
-//    vel_y_ += acceleration_ * time;
-    next_pos_y_ = vel_y_ * time;
+    vel_y_ += acceleration_ * time * 100;
     for (const auto & rec : vec) {
         if (verticalCollison(next_pos_y_, rec)) {
             vertical_collision_ = true;
@@ -82,29 +80,21 @@ void Player::control(float &time, std::vector<std::unique_ptr<AnimatedSprite>> &
     } else {
         next_pos_x_ = 0;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !moving_up_) {
         moving_up_ = true;
+        vel_y_ = -500;
     }
-    if (!moving_up_) {
-        if (!vertical_collision_) {
-            move(0, next_pos_y_);
-        }
-    } else {
-        move(0, -next_pos_y_);
-        distance_jump_ += next_pos_y_;
-        if (vertical_collision_ || distance_jump_ > 150) {
-            moving_up_ = false;
-            distance_jump_ = 0;
-        }
+    next_pos_y_ = vel_y_ * time;
+    if(!vertical_collision_){
+        move(0, next_pos_y_);
+    }else{
+        vel_y_ = 0;
     }
-//    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-//        next_pos_y_ = -next_pos_y_;
-//    }
-//    if(!vertical_collision_ || moving_up_){
-//        move(0, next_pos_y_);
-//    }else{
-//        next_pos_y_ = 0;
-//    }
+
+    if(vertical_collision_ && vel_y_ >= 0){
+        moving_up_ = false;
+    }
+
     if (!horizontal_collision_) {
         move(next_pos_x_, 0);
     }
@@ -153,15 +143,6 @@ void Player::shoot(std::vector<std::unique_ptr<Bullet>> &vec) {
 }
 
 void Player::setFrames() {
-//    this->addAnimationFrame(sf::IntRect(0, 0, 567, 556), animated_character_);
-//    this->addAnimationFrame(sf::IntRect(567, 0, 567, 556), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(1134, 0, 567, 556), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(1701, 0, 567, 556), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(2268, 0, 567, 556), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(2835, 0, 567, 556), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(3402, 0, 567, 556), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(3969, 0, 567, 556), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(4536, 0, 567, 556), animated_walking_);
     this->addAnimationFrame(sf::IntRect(0, 0, 48, 40), animated_walking_);
     this->addAnimationFrame(sf::IntRect(48, 0, 48, 40), animated_walking_);
     this->addAnimationFrame(sf::IntRect(96, 0, 48, 40), animated_walking_);
