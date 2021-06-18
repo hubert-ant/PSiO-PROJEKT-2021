@@ -2,34 +2,72 @@
 #define ENEMY_H
 
 #include <string>
+#include <cmath>
 
 #include "AnimatedSprite.h"
 
 class Enemy : public AnimatedSprite {
 public:
-    Enemy(double x, double y, const std::string &filename);
-    void movingRight() {}
-    void movingLeft() {}
+    void movingRight();
+    void movingLeft();
     bool moving() {}
-    void setFrames() {}
-    void step(float& time) {}
-    void mirror() {}
+    void setFrames() = 0;
+    void step(float &time);
+    void mirror();
+    void control(float &time);
     static void setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects);
+protected:
+    double distance_x_, sum_of_distance_x_;
+    int direction_;
 };
 
-Enemy::Enemy(double x, double y, const std::string &filename) {
-    x_ = x;
-    y_ = y;
-    filename_ = filename;
+void Enemy::movingLeft(){
+    moving_left_ = true;
+    moving_right_ = false;
 }
 
-void Enemy::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects){
-    std::unique_ptr<AnimatedSprite> enemy1 = std::make_unique<Enemy>(500.0, 300.0, "duch");
-    std::unique_ptr<AnimatedSprite> enemy2 = std::make_unique<Enemy>(600.0, 300.0, "duch");
-    std::unique_ptr<AnimatedSprite> enemy3 = std::make_unique<Enemy>(700.0, 300.0, "duch");
-    setObject(enemy1, objects);
-    setObject(enemy2, objects);
-    setObject(enemy3, objects);
+void Enemy::movingRight(){
+    moving_left_ = false;
+    moving_right_ = true;
+}
+
+void Enemy::control(float &time){
+    distance_x_ = direction_ * vel_x_ * time;
+    sum_of_distance_x_ += distance_x_;
+    if(fabs(sum_of_distance_x_) < 200){
+        move(distance_x_, 0);
+    }else{
+        sum_of_distance_x_ = 0;
+        direction_ = -direction_;
+    }
+}
+
+void Enemy::mirror(){
+    sf::IntRect temp = animated_walking_[0];
+    float origin_x = temp.width;
+    float origin_y = temp.height;
+    setOrigin(origin_x / 2, origin_y / 2);
+    if (direction_ > 0) {
+        setScale(1, 1);
+    }
+    if (direction_ < 0) {
+        setScale(-1, 1);
+    }
+}
+
+void Enemy::step(float &time){
+    sec_walking_ += time;
+    setFrames();
+    mirror();
+    if (sec_walking_ >= 1.0 / frames_) {
+        setTextureRect(animated_walking_[current_frame_index_]);
+        if (current_frame_index_ >= animated_walking_.size() - 1) {
+            current_frame_index_ = 0;
+        } else {
+            current_frame_index_++;
+        }
+        sec_walking_ = 0;
+    }
 }
 
 #endif // ENEMY_H

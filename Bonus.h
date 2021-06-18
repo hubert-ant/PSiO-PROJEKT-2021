@@ -12,6 +12,7 @@ public:
     void setFrames();
     void step(float& time) {}
     void mirror() {}
+    void control(float &time) {}
 };
 
 #endif // BONUS_H

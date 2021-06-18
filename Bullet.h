@@ -20,6 +20,7 @@ public:
     Bullet(double x, double y, const std::string &filename);
     void fired(float &time);
     void collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &vec);
+    void control(float &time) {}
 };
 
 Bullet::Bullet(double x, double y, const std::string &filename) {
@@ -46,10 +47,10 @@ void Bullet::mirror() {
     float origin_y = temp.height;
     setOrigin(origin_x / 2, origin_y / 2);
     if (moving_right_ == true) {
-        setScale(0.1, 0.1);
+        setScale(0.08, 0.08);
     }
     if (moving_left_ == true) {
-        setScale(-0.1, 0.1);
+        setScale(-0.08, 0.08);
     }
 }
 

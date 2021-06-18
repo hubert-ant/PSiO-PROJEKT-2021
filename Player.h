@@ -14,7 +14,7 @@
 class Player : public AnimatedSprite {
 public:
     Player(double x, double y, double vel_x, double vel_y, const std::string &filename);
-    void control(float& time, std::vector<std::unique_ptr<AnimatedSprite>> &vec);
+    void control(float &time);
     void shoot(std::vector<std::unique_ptr<Bullet>> &vec);
     void movingLeft();
     void movingRight();
@@ -25,6 +25,7 @@ public:
     void animate(float &time);
     bool verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object);
     bool horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object);
+    void checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec);
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_, sec_staying_;
     bool horizontal_collision_, vertical_collision_, moving_up_;
@@ -59,10 +60,9 @@ void Player::movingRight() {
     moving_right_ = true;
 }
 
-void Player::control(float &time, std::vector<std::unique_ptr<AnimatedSprite>> &vec) {
+void Player::checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec){
     horizontal_collision_ = false;
     vertical_collision_ = false;
-    vel_y_ += acceleration_ * time * 100;
     for (const auto & rec : vec) {
         if (verticalCollison(next_pos_y_, rec)) {
             vertical_collision_ = true;
@@ -71,6 +71,9 @@ void Player::control(float &time, std::vector<std::unique_ptr<AnimatedSprite>> &
             horizontal_collision_ = true;
         }
     }
+}
+void Player::control(float &time) {
+    vel_y_ += acceleration_ * time * 100;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         next_pos_x_ = -vel_x_ * time;
         this->movingLeft();
@@ -215,7 +218,6 @@ void Player::step(float &time) {
         sec_staying_ = 0;
         sec_walking_ = 0;
     }
-
 }
 
 #endif // PLAYER_H

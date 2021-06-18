@@ -6,6 +6,8 @@
 #include "AnimatedSprite.h"
 #include "Bullet.h"
 #include "Enemy.h"
+#include "Enemyeye.h"
+#include "Enemygoblin.h"
 #include "Player.h"
 #include "Wall.h"
 #include "Bonus.h"
@@ -16,15 +18,16 @@ int main() {
     sf::Clock clock;
     std::vector<std::unique_ptr<AnimatedSprite>> objects;
     std::vector<std::unique_ptr<Bullet>> bullets;
-
+    srand(time(NULL));
     //Player
-    Player player(10.0, 520.0, 100.00, 100.0, "gunner");
+    Player player(10.0, 520.0, 100.00, 0.0, "gunner");
     player.setPos();
     player.setText();
 
     //Walls & enemies
     Wall::setWall(objects);
-    Enemy::setEnemies(objects);
+    Enemyeye::setEnemies(objects);
+    Enemygoblin::setEnemies(objects);
 
     //loop
     window.setFramerateLimit(60);
@@ -42,8 +45,14 @@ int main() {
         window.clear(sf::Color::Black);
 
         //LOGIC
-        player.control(time, objects);
+        player.checkCollision(objects);
+        player.control(time);
         player.step(time);
+
+        for (auto &rec : objects) {
+            rec->step(time);
+            rec->control(time);
+        }
 
         for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
             (*bullet)->fired(time);

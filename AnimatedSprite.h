@@ -13,6 +13,7 @@ public:
     virtual void setFrames() = 0;
     virtual void step(float& time) = 0;
     virtual void mirror() = 0;
+    virtual void control(float &time) = 0;
     void setText();
     void setPos();
     void addAnimationFrame(const sf::IntRect &rectangle, std::vector<sf::IntRect> &animated);
