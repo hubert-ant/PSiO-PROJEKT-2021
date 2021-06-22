@@ -5,20 +5,21 @@
 #include <cmath>
 
 #include "AnimatedSprite.h"
+#include <Bullet.h>
 
 class Enemy : public AnimatedSprite {
 public:
     void movingRight();
     void movingLeft();
-    bool moving() {}
+    bool moving();
     void setFrames() = 0;
-    void step(float &time);
+    void step(float &time) = 0;
     void mirror();
     void control(float &time);
+    void randomDirection();
     static void setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects);
 protected:
-    double distance_x_, sum_of_distance_x_;
-    int direction_;
+    double distance_x_, time_of_staying_;
 };
 
 void Enemy::movingLeft(){
@@ -31,14 +32,30 @@ void Enemy::movingRight(){
     moving_right_ = true;
 }
 
+bool Enemy::moving(){
+    if(timer_ >= 0){
+        return false;
+    }
+    return true;
+}
+
 void Enemy::control(float &time){
     distance_x_ = direction_ * vel_x_ * time;
-    sum_of_distance_x_ += distance_x_;
-    if(fabs(sum_of_distance_x_) < 200){
-        move(distance_x_, 0);
+    time_of_staying_ += time;
+    if(time_of_staying_ >= 2){
+        timer_ = time_of_staying_;
+        time_of_staying_ = 0;
+    }
+    if(!moving()){
+        time_of_staying_ = 0;
+        timer_ -= time;
     }else{
-        sum_of_distance_x_ = 0;
-        direction_ = -direction_;
+        if(getPosition().x > x_ - 100 && getPosition().x < x_ + 100){
+            move(distance_x_, 0);
+        }else{
+            direction_ = -direction_;
+            move(-distance_x_, 0);
+        }
     }
 }
 
@@ -52,21 +69,6 @@ void Enemy::mirror(){
     }
     if (direction_ < 0) {
         setScale(-1, 1);
-    }
-}
-
-void Enemy::step(float &time){
-    sec_walking_ += time;
-    setFrames();
-    mirror();
-    if (sec_walking_ >= 1.0 / frames_) {
-        setTextureRect(animated_walking_[current_frame_index_]);
-        if (current_frame_index_ >= animated_walking_.size() - 1) {
-            current_frame_index_ = 0;
-        } else {
-            current_frame_index_++;
-        }
-        sec_walking_ = 0;
     }
 }
 

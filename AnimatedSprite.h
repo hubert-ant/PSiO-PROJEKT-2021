@@ -16,17 +16,18 @@ public:
     virtual void control(float &time) = 0;
     void setText();
     void setPos();
+    void setDirection();
     void addAnimationFrame(const sf::IntRect &rectangle, std::vector<sf::IntRect> &animated);
     static void setObject(std::unique_ptr<AnimatedSprite> &object, std::vector<std::unique_ptr<AnimatedSprite>> &objects);
     virtual ~AnimatedSprite() = default;
 protected:
     sf::Texture texture_;
-    double x_, y_, vel_x_, vel_y_, sec_walking_, timer_;
+    double x_, y_, vel_x_, vel_y_, sec_walking_, timer_, sec_staying_;
     std::string filename_;
     bool moving_left_ = false, moving_right_ = false, moving_ = false;
     std::vector<sf::IntRect> animated_character_;
     std::vector<sf::IntRect> animated_walking_;
-    int current_frame_index_ = 0, frames_ = 0;
+    int current_frame_index_ = 0, current_frame_index_staying_ = 0, frames_ = 0, frames_staying_ = 0, direction_;
 };
 
 void AnimatedSprite::setText() {
@@ -40,6 +41,15 @@ void AnimatedSprite::setPos() {
     setPosition(x_, y_);
 }
 
+void AnimatedSprite::setDirection() {
+    int temp = (std::rand()%10)+ 1;
+    if(temp > 5){
+        direction_ = 1;
+    }else{
+        direction_ = -1;
+    }
+}
+
 void AnimatedSprite::addAnimationFrame(const sf::IntRect& rectangle, std::vector<sf::IntRect>& animated) {
     animated.emplace_back(rectangle);
 }
@@ -47,6 +57,7 @@ void AnimatedSprite::addAnimationFrame(const sf::IntRect& rectangle, std::vector
 void AnimatedSprite::setObject(std::unique_ptr<AnimatedSprite> &object, std::vector<std::unique_ptr<AnimatedSprite>> &objects){
     object->setPos();
     object->setText();
+    object->setDirection();
     objects.emplace_back(std::move(object));
 }
 

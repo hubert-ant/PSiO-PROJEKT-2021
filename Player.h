@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "AnimatedSprite.h"
-#include "Bullet.h"
+#include "Bulletplayer.h"
 
 class Player : public AnimatedSprite {
 public:
@@ -27,9 +27,8 @@ public:
     bool horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object);
     void checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec);
 protected:
-    double acceleration_, distance_jump_, next_pos_x_, next_pos_y_, sec_staying_;
+    double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
     bool horizontal_collision_, vertical_collision_, moving_up_;
-    int frames_staying_ = 0, current_frame_index_staying_ = 0;
     std::vector<sf::IntRect> animated_jumping_;
 };
 
@@ -131,7 +130,7 @@ void Player::shoot(std::vector<std::unique_ptr<Bullet>> &vec) {
         x = this->getGlobalBounds().left;
     }
     y = this->getGlobalBounds().top + (this->getGlobalBounds().height / 2);
-    auto bullet = std::make_unique<Bullet>(x, y, "bullet");
+    auto bullet = std::make_unique<Bulletplayer>(x, y, "bullet");
     if (this->moving_right_) {
         bullet->movingRight();
     }

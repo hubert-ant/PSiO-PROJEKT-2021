@@ -5,6 +5,9 @@
 
 #include "AnimatedSprite.h"
 #include "Bullet.h"
+#include "Bulletplayer.h"
+#include "Bulletenemyeye.h"
+#include "Bulletenemygoblin.h"
 #include "Enemy.h"
 #include "Enemyeye.h"
 #include "Enemygoblin.h"
@@ -18,7 +21,9 @@ int main() {
     sf::Clock clock;
     std::vector<std::unique_ptr<AnimatedSprite>> objects;
     std::vector<std::unique_ptr<Bullet>> bullets;
+    std::vector<std::unique_ptr<Bullet>> bullets_enemy;
     srand(time(NULL));
+
     //Player
     Player player(10.0, 520.0, 100.00, 0.0, "gunner");
     player.setPos();
