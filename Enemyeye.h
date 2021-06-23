@@ -1,8 +1,8 @@
 #ifndef ENEMYEYE_H
 #define ENEMYEYE_H
 
-#include <Enemy.h>
-#include <Bullet.h>
+#include "Enemy.h"
+#include "Bulletenemyeye.h"
 
 class Enemyeye : public Enemy{
 public:
@@ -10,6 +10,7 @@ public:
     void setFrames();
     void step(float &time);
     static void setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects);
+    void shoot(std::vector<std::unique_ptr<Bullet>> &bullets);
 };
 
 Enemyeye::Enemyeye(double x, double y, double vx, const std::string &filename) {
@@ -55,6 +56,31 @@ void Enemyeye::step(float &time){
             current_frame_index_++;
         }
         sec_walking_ = 0;
+    }
+}
+
+void Enemyeye::shoot(std::vector<std::unique_ptr<Bullet>> &bullets){
+    float x, y;
+    int los = (std::rand()%100)+ 1;
+    if(los < 2){
+        if (direction_ > 0) {
+            x = this->getGlobalBounds().left + this->getGlobalBounds().width;
+        } else {
+            x = this->getGlobalBounds().left;
+        }
+        y = this->getGlobalBounds().top + (this->getGlobalBounds().height / 2);
+        auto bullet = std::make_unique<Bulletenemyeye>(x, y, "bullet_enemyeye");
+        if (direction_ > 0) {
+            bullet->movingRight();
+        }
+        if (direction_ < 0) {
+            bullet->movingLeft();
+        }
+        bullet->setPos();
+        bullet->setText();
+        bullet->setFrames();
+        bullet->mirror();
+        bullets.emplace_back(std::move(bullet));
     }
 }
 

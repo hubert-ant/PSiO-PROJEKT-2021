@@ -5,15 +5,18 @@
 #include <iostream>
 #include <vector>
 
+class Bullet;
+
 class AnimatedSprite : public sf::Sprite {
 public:
     virtual void movingLeft() = 0;
     virtual void movingRight() = 0;
     virtual bool moving() = 0;
     virtual void setFrames() = 0;
-    virtual void step(float& time) = 0;
+    virtual void step(float &time) = 0;
     virtual void mirror() = 0;
     virtual void control(float &time) = 0;
+    virtual void shoot(std::vector<std::unique_ptr<Bullet>> &bullets) = 0;
     void setText();
     void setPos();
     void setDirection();

@@ -5,9 +5,11 @@
 #include <cmath>
 
 #include "AnimatedSprite.h"
-#include <Bullet.h>
 
-class Enemy : public AnimatedSprite {
+
+class Bullet;
+
+class Enemy : public AnimatedSprite  {
 public:
     void movingRight();
     void movingLeft();
@@ -18,8 +20,9 @@ public:
     void control(float &time);
     void randomDirection();
     static void setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects);
+    void shoot(std::vector<std::unique_ptr<Bullet>> &bullets) = 0;
 protected:
-    double distance_x_, time_of_staying_;
+    double distance_x_, time_of_staying_, sum_of_distance_x = 0;
 };
 
 void Enemy::movingLeft(){
@@ -42,6 +45,7 @@ bool Enemy::moving(){
 void Enemy::control(float &time){
     distance_x_ = direction_ * vel_x_ * time;
     time_of_staying_ += time;
+    sum_of_distance_x += distance_x_;
     if(time_of_staying_ >= 2){
         timer_ = time_of_staying_;
         time_of_staying_ = 0;

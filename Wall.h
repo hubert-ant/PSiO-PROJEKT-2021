@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <AnimatedSprite.h>
+#include "AnimatedSprite.h"
 
 class Wall : public AnimatedSprite {
 public:
@@ -16,6 +16,7 @@ public:
     void mirror() {}
     static void setWall(std::vector<std::unique_ptr<AnimatedSprite>> &objects);
     void control(float &time) {}
+    void shoot(std::vector<std::unique_ptr<Bullet>> &bullets) {}
 };
 
 Wall::Wall(double x, double y, const std::string &filename) {

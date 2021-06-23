@@ -13,6 +13,7 @@ public:
     void step(float& time) {}
     void mirror() {}
     void control(float &time) {}
+    void shoot(std::vector<std::unique_ptr<Bullet>> &bullets) {}
 };
 
 #endif // BONUS_H

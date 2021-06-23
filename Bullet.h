@@ -9,6 +9,8 @@
 #include "AnimatedSprite.h"
 #include "Enemy.h"
 
+class Player;
+
 class Bullet : public AnimatedSprite {
 public:
     void movingRight();
@@ -16,10 +18,11 @@ public:
     bool moving() {}
     void setFrames() = 0;
     void mirror();
-    void step(float &time) = 0;
-    void fired(float &time);
-    virtual void collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &vec) = 0;
+    void step(float &time);
+    virtual void fired(float &time) = 0;
+    virtual void collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &vec, Player &player) = 0;
     void control(float &time) {}
+    void shoot(std::vector<std::unique_ptr<Bullet>> &bullets) {}
 };
 
 void Bullet::movingLeft() {
@@ -43,13 +46,18 @@ void Bullet::mirror() {
     }
 }
 
-void Bullet::fired(float &time) {
-    float distance = vel_x_ * time;
-    if (moving_left_) {
-        move(-distance, 0);
+void Bullet::step(float &time){
+    if (sec_walking_ == 0) {
+        setTextureRect(animated_walking_[current_frame_index_]);
+        if (current_frame_index_ >= animated_walking_.size() - 1) {
+            current_frame_index_ = 0;
+        } else {
+            current_frame_index_++;
+        }
     }
-    if (moving_right_) {
-        move(distance, 0);
+    sec_walking_ += time;
+    if (sec_walking_ >= 1.0 / frames_) {
+        sec_walking_ = 0;
     }
 }
 

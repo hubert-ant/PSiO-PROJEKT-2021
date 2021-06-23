@@ -1,8 +1,8 @@
 #ifndef ENEMYGOBLIN_H
 #define ENEMYGOBLIN_H
 
-#include <Enemy.h>
-#include <Bullet.h>
+#include "Enemy.h"
+#include "Bulletenemygoblin.h"
 
 class Enemygoblin : public Enemy{
 public:
@@ -10,6 +10,7 @@ public:
     void setFrames();
     static void setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects);
     void step(float &time);
+    void shoot( std::vector<std::unique_ptr<Bullet>> &bullets);
 };
 
 Enemygoblin::Enemygoblin(double x, double y, double vx, const std::string &filename) {
@@ -41,9 +42,9 @@ void Enemygoblin::setFrames(){
     this->addAnimationFrame(sf::IntRect(1705, 50, 40, 50), animated_character_);
 }
 void Enemygoblin::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects){
-    std::unique_ptr<AnimatedSprite> enemy1 = std::make_unique<Enemygoblin>(500.0, 400.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy1 = std::make_unique<Enemygoblin>(500.0, 200.0, 100.0, "goblin");
     std::unique_ptr<AnimatedSprite> enemy2 = std::make_unique<Enemygoblin>(600.0, 400.0, 100.0, "goblin");
-    std::unique_ptr<AnimatedSprite> enemy3 = std::make_unique<Enemygoblin>(700.0, 400.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy3 = std::make_unique<Enemygoblin>(700.0, 500.0, 100.0, "goblin");
     setObject(enemy1, objects);
     setObject(enemy2, objects);
     setObject(enemy3, objects);
@@ -80,6 +81,31 @@ void Enemygoblin::step(float &time){
             sec_walking_ = 0;
         }
         sec_staying_ = 0;
+    }
+}
+
+void Enemygoblin::shoot(std::vector<std::unique_ptr<Bullet>> &bullets){
+    float x, y;
+    int los = (std::rand()%100)+ 1;
+    if(los < 10){
+        if (direction_ > 0) {
+            x = this->getGlobalBounds().left + this->getGlobalBounds().width;
+        } else {
+            x = this->getGlobalBounds().left;
+        }
+        y = this->getGlobalBounds().top + (this->getGlobalBounds().height / 2);
+        auto bullet = std::make_unique<Bulletenemygoblin>(x, y, "bullet_enemygoblin");
+        if (direction_ > 0) {
+            bullet->movingRight();
+        }
+        if (direction_ < 0) {
+            bullet->movingLeft();
+        }
+        bullet->setPos();
+        bullet->setText();
+        bullet->setFrames();
+        bullet->mirror();
+        bullets.emplace_back(std::move(bullet));
     }
 }
 

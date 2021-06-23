@@ -21,7 +21,8 @@ int main() {
     sf::Clock clock;
     std::vector<std::unique_ptr<AnimatedSprite>> objects;
     std::vector<std::unique_ptr<Bullet>> bullets;
-    std::vector<std::unique_ptr<Bullet>> bullets_enemy;
+    std::vector<std::unique_ptr<Bullet>> bullets_enemy_eye;
+    std::vector<std::unique_ptr<Bullet>> bullets_enemy_goblin;
     srand(time(NULL));
 
     //Player
@@ -54,22 +55,49 @@ int main() {
         player.control(time);
         player.step(time);
 
-        for (auto &rec : objects) {
-            rec->step(time);
-            rec->control(time);
+            //tworzenie pociskow przeciwnikow
+        for (auto object = objects.begin(); object < objects.end(); object++) {
+            auto enemyeye = dynamic_cast<Enemyeye*>(object->get());
+            auto enemygoblin = dynamic_cast<Enemygoblin*>(object->get());
+            if (enemyeye != nullptr) {
+                (*object)->shoot(bullets_enemy_eye);
+            }
+            if (enemygoblin != nullptr) {
+                (*object)->shoot(bullets_enemy_goblin);
+            }
+            (*object)->step(time);
+            (*object)->control(time);
+        }
+            //obsluga pociskow przeciwnikow
+        for (auto bullet_en_eye = bullets_enemy_eye.begin(); bullet_en_eye < bullets_enemy_eye.end(); ++bullet_en_eye) {
+            (*bullet_en_eye)->fired(time);
+            (*bullet_en_eye)->step(time);
+            (*bullet_en_eye)->collision(bullets_enemy_eye, objects, player);
+        }
+        for (auto bullet_en_goblin = bullets_enemy_goblin.begin(); bullet_en_goblin < bullets_enemy_goblin.end(); ++bullet_en_goblin) {
+            (*bullet_en_goblin)->fired(time);
+            (*bullet_en_goblin)->step(time);
+            (*bullet_en_goblin)->collision(bullets_enemy_eye, objects, player);
         }
 
         for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
             (*bullet)->fired(time);
             (*bullet)->step(time);
-            (*bullet)->collision(bullets, objects);
+            (*bullet)->collision(bullets, objects, player);
         }
+
 
         //DRAW
         for (auto &rec : objects) {
             window.draw(*rec);
         }
         for (auto &rec : bullets) {
+            window.draw(*rec);
+        }
+        for (auto &rec : bullets_enemy_eye) {
+            window.draw(*rec);
+        }
+        for (auto &rec : bullets_enemy_goblin) {
             window.draw(*rec);
         }
         window.draw(player);
