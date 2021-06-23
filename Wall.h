@@ -28,10 +28,14 @@ Wall::Wall(double x, double y, const std::string &filename) {
 void Wall::setWall(std::vector<std::unique_ptr<AnimatedSprite>> &objects){
     std::unique_ptr<AnimatedSprite> wall1 = std::make_unique<Wall>(0, 550, "wall");
     std::unique_ptr<AnimatedSprite> wall2 = std::make_unique<Wall>(0.0, 200.0, "wall");
-    std::unique_ptr<AnimatedSprite> wall3 = std::make_unique<Wall>(200.0, 450.0, "wall");
+    std::unique_ptr<AnimatedSprite> wall3 = std::make_unique<Wall>(200.0, 550.0, "wall");
+    std::unique_ptr<AnimatedSprite> wall4 = std::make_unique<Wall>(400.0, 450.0, "wall");
+    std::unique_ptr<AnimatedSprite> wall5 = std::make_unique<Wall>(600.0, 450.0, "wall");
     setObject(wall1, objects);
     setObject(wall2, objects);
     setObject(wall3, objects);
+    setObject(wall4, objects);
+    setObject(wall5, objects);
 }
 
 #endif // WALL_H

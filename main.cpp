@@ -72,18 +72,18 @@ int main() {
         for (auto bullet_en_eye = bullets_enemy_eye.begin(); bullet_en_eye < bullets_enemy_eye.end(); ++bullet_en_eye) {
             (*bullet_en_eye)->fired(time);
             (*bullet_en_eye)->step(time);
-            (*bullet_en_eye)->collision(bullets_enemy_eye, objects, player);
+            (*bullet_en_eye)->collision(bullets_enemy_eye, objects, player, time);
         }
         for (auto bullet_en_goblin = bullets_enemy_goblin.begin(); bullet_en_goblin < bullets_enemy_goblin.end(); ++bullet_en_goblin) {
-            (*bullet_en_goblin)->fired(time);
+
             (*bullet_en_goblin)->step(time);
-            (*bullet_en_goblin)->collision(bullets_enemy_eye, objects, player);
+            (*bullet_en_goblin)->collision(bullets_enemy_goblin, objects, player, time);
         }
 
         for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
             (*bullet)->fired(time);
             (*bullet)->step(time);
-            (*bullet)->collision(bullets, objects, player);
+            (*bullet)->collision(bullets, objects, player, time);
         }
 
 

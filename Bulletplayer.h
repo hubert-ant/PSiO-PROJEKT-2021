@@ -11,7 +11,7 @@ public:
     void setFrames();
     void mirror();
     void fired(float &time);
-    void collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects, Player &player);
+    void collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects, Player &player, float time);
 };
 
 Bulletplayer::Bulletplayer(double x, double y, const std::string &filename) {
@@ -55,7 +55,7 @@ void Bulletplayer::fired(float &time){
     }
 }
 
-void Bulletplayer::collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects, Player &player) {
+void Bulletplayer::collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects, Player &player, float time) {
     for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
         for (auto object = objects.begin(); object < objects.end(); object++) {
             auto enemy = dynamic_cast<Enemy*>(object->get());

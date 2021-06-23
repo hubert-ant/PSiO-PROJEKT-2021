@@ -71,6 +71,7 @@ void Player::checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec){
         }
     }
 }
+
 void Player::control(float &time) {
     vel_y_ += acceleration_ * time * 100;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {

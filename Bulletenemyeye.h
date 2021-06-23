@@ -17,7 +17,7 @@ public:
     void setFrames();
     void mirror();
     void fired(float &time);
-    void collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects, Player &player);
+    void collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects, Player &player, float time);
 };
 
 Bulletenemyeye::Bulletenemyeye(double x, double y, const std::string &filename){
@@ -59,7 +59,7 @@ void Bulletenemyeye::fired(float &time){
     }
 }
 
-void Bulletenemyeye::collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects, Player &player){
+void Bulletenemyeye::collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects, Player &player, float time){
     for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
         for (auto object = objects.begin(); object < objects.end(); object++) {
             auto wall = dynamic_cast<Wall*>(object->get());
