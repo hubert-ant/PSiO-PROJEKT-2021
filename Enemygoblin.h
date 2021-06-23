@@ -87,7 +87,7 @@ void Enemygoblin::step(float &time){
 void Enemygoblin::shoot(std::vector<std::unique_ptr<Bullet>> &bullets){
     float x, y;
     int los = (std::rand()%200)+ 1;
-    if(los < 5){
+    if(los < 2){
         if (direction_ > 0) {
             x = this->getGlobalBounds().left + this->getGlobalBounds().width;
         } else {
@@ -108,5 +108,6 @@ void Enemygoblin::shoot(std::vector<std::unique_ptr<Bullet>> &bullets){
         bullets.emplace_back(std::move(bullet));
     }
 }
+
 
 #endif // ENEMYGOBLIN_H

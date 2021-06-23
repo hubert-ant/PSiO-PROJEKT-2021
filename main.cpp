@@ -75,7 +75,6 @@ int main() {
             (*bullet_en_eye)->collision(bullets_enemy_eye, objects, player, time);
         }
         for (auto bullet_en_goblin = bullets_enemy_goblin.begin(); bullet_en_goblin < bullets_enemy_goblin.end(); ++bullet_en_goblin) {
-
             (*bullet_en_goblin)->step(time);
             (*bullet_en_goblin)->collision(bullets_enemy_goblin, objects, player, time);
         }

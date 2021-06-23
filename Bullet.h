@@ -18,7 +18,7 @@ public:
     bool moving() {}
     void setFrames() = 0;
     void mirror() = 0;
-    void step(float &time);
+    virtual void step(float &time);
     virtual void fired(float &time) = 0;
     virtual void collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &vec, Player &player, float time) = 0;
     void control(float &time) {}

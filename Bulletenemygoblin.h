@@ -13,12 +13,15 @@ public:
     void setFrames();
     void mirror();
     void fired(float &time);
+    void step(float &time);
     void collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects, Player &player, float time);
     bool verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object);
     bool horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object);
+    void del(std::vector<std::unique_ptr<Bullet>> &bullets);
 protected:
     bool horizontal_collision_ = false, vertical_collision_;
     double next_pos_x_, next_pos_y_, acceleration_;
+    int to_delete_;
 };
 
 Bulletenemygoblin ::Bulletenemygoblin (double x, double y, const std::string &filename) {
@@ -27,10 +30,11 @@ Bulletenemygoblin ::Bulletenemygoblin (double x, double y, const std::string &fi
     filename_ = filename;
     vel_x_ = 200;
     vel_y_ = -300;
-    frames_ = 19;
+    frames_ = 18;
     current_frame_index_ = 0;
     sec_walking_ = 0;
     acceleration_ = 10;
+    to_delete_ = 0;
 }
 
 void Bulletenemygoblin::mirror() {
@@ -46,9 +50,8 @@ void Bulletenemygoblin::mirror() {
     }
 }
 
-
 void Bulletenemygoblin::setFrames(){
-    this->addAnimationFrame(sf::IntRect(40, 40, 20, 20), animated_walking_); //rzut
+    this->addAnimationFrame(sf::IntRect(40, 40, 20, 20), animated_character_); //rzut
     this->addAnimationFrame(sf::IntRect(140, 40, 20, 20), animated_walking_); //lądowanie
     this->addAnimationFrame(sf::IntRect(240, 40, 20, 20), animated_walking_);
     this->addAnimationFrame(sf::IntRect(340, 40, 20, 20), animated_walking_);
@@ -63,10 +66,11 @@ void Bulletenemygoblin::setFrames(){
     this->addAnimationFrame(sf::IntRect(1240, 20, 40, 50), animated_walking_);
     this->addAnimationFrame(sf::IntRect(1340, 20, 40, 50), animated_walking_);
     this->addAnimationFrame(sf::IntRect(1430, 20, 50, 50), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(1510, 10, 60, 60), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(1610, 10, 60, 70), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(1710, 10, 60, 65), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(1810, 10, 60, 60), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(1500, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(1600, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(1700, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(1800, 0, 100, 100), animated_walking_);
+
 }
 
 bool Bulletenemygoblin::verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object) {
@@ -95,19 +99,25 @@ void Bulletenemygoblin::fired(float &time){
     if (moving_right_) {
         direction_ = 1;
     }
-
     next_pos_x_ = direction_ *  vel_x_ * time;
     next_pos_y_ =    vel_y_ * time;
     vel_y_ += acceleration_ * time * 100;
-
     if(!vertical_collision_){
         move(0, next_pos_y_);
     }else{
         vel_y_ = 0;
     }
-
     if (!horizontal_collision_) {
         move(next_pos_x_, 0);
+    }
+}
+
+void Bulletenemygoblin::del(std::vector<std::unique_ptr<Bullet>> &bullets){
+    for (auto bullet = bullets.begin(); bullet < bullets.end(); bullet++){
+        if(to_delete_ == 1){
+            bullets.erase(bullet);
+            break;
+        }
     }
 }
 
@@ -116,18 +126,36 @@ void Bulletenemygoblin::collision(std::vector<std::unique_ptr<Bullet>> &bullets,
     vertical_collision_ = false;
     for (auto object = objects.begin(); object < objects.end(); object++) {
         auto wall = dynamic_cast<Wall*>(object->get());
-        if (wall!= nullptr) {
+        if (wall != nullptr) {
             if (verticalCollison(next_pos_y_, *object)) {
                 vertical_collision_ = true;
             }
             if (horizontalCollison(next_pos_x_, *object)) {
                 horizontal_collision_ = true;
             }
-        }
+        }      
     }
     fired(time);
+    del(bullets);
 }
 
-
+void Bulletenemygoblin::step(float &time){
+    if(!vertical_collision_){
+        setTextureRect(animated_character_[0]);
+    }else{
+        if (sec_walking_ == 0) {
+            setTextureRect(animated_walking_[current_frame_index_]);
+            if (current_frame_index_ >= animated_walking_.size() - 1) {
+                to_delete_ = 1;
+            } else {
+                current_frame_index_++;
+            }
+        }
+        sec_walking_ += time;
+        if (sec_walking_ >= 1.0 / frames_) {
+            sec_walking_ = 0;
+        }
+    }
+}
 
 #endif // BULLETENEMYGOBLIN_H
