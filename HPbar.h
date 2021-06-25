@@ -16,7 +16,7 @@ public:
     virtual void shoot(std::vector<std::unique_ptr<Bullet>> &bullets) {}
     Hpbar(double x, double y, const std::string &filename);
     static void createPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar,  Player &player);
-    static void substractPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar,  Player &player);
+    static void subtractPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar,  Player &player);
 };
 
 Hpbar::Hpbar(double x, double y, const std::string &filename){
@@ -36,12 +36,14 @@ void Hpbar::createPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &pla
     }
 }
 
-void Hpbar::substractPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &player){
+void Hpbar::subtractPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &player){
     int temp = player.checkHpToDelete();
     for(int i = 0; i < temp; i++){
-        bar.erase(bar.end());
+        if(bar.size() > 0){
+            bar.erase(bar.end());
+        }
     }
-    player.substractHp(0);
+    player.subtractHp(0);
 }
 
 #endif // HPBAR_H

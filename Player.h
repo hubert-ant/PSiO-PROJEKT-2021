@@ -26,7 +26,7 @@ public:
     bool verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object);
     bool horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object);
     void checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec);
-    void substractHp(int how_many);
+    void subtractHp(int how_many);
     int checkHpToDelete();
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
@@ -224,7 +224,7 @@ void Player::step(float &time) {
     }
 }
 
-void Player::substractHp(int how_many){
+void Player::subtractHp(int how_many){
     how_many_to_delete_ = how_many;
     hp_ -= how_many;
 }

@@ -59,7 +59,7 @@ int main() {
         player.step(time);
 
 
-        Hpbar::substractPlayerHp(hp_bar, player);
+        Hpbar::subtractPlayerHp(hp_bar, player);
 
             //tworzenie pociskow przeciwnikow
         for (auto object = objects.begin(); object < objects.end(); object++) {

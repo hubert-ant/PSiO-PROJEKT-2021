@@ -21,6 +21,7 @@ public:
     void del(std::vector<std::unique_ptr<Bullet>> &bullets, Player &player);
     double getPosx();
     double getPosy();
+    sf::FloatRect getCollisionBound();
 protected:
     bool horizontal_collision_ = false, vertical_collision_;
     double next_pos_x_, next_pos_y_, acceleration_;
@@ -104,25 +105,35 @@ void Bulletenemygoblin::setFrames(){
 
 }
 
+sf::FloatRect Bulletenemygoblin::getCollisionBound(){
+    sf::FloatRect collisonbox = getGlobalBounds();
+    collisonbox.left += 48;
+    collisonbox.top += 48;
+    collisonbox.width = 9;
+    collisonbox.height = 9;
+    return collisonbox;
+}
+
 bool Bulletenemygoblin::verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object) {
-    if (getGlobalBounds().top + getGlobalBounds().height + next_pos_y >= object->getGlobalBounds().top &&
-        getGlobalBounds().top + next_pos_y <= object->getGlobalBounds().top + object->getGlobalBounds().height &&
-        !(getGlobalBounds().left >= object->getGlobalBounds().left + object->getGlobalBounds().width ||
-          getGlobalBounds().left + getGlobalBounds().width <= object->getGlobalBounds().left)) {
+    if (getCollisionBound().top + getCollisionBound().height + next_pos_y >= object->getGlobalBounds().top &&
+        getCollisionBound().top + next_pos_y <= object->getGlobalBounds().top + object->getGlobalBounds().height &&
+        !(getCollisionBound().left >= object->getGlobalBounds().left + object->getGlobalBounds().width ||
+          getCollisionBound().left + getCollisionBound().width <= object->getGlobalBounds().left)) {
         return true;
     }
     return false;
 }
 
 bool Bulletenemygoblin::horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object) {
-    if (getGlobalBounds().left + next_pos_x <= object->getGlobalBounds().left + object->getGlobalBounds().width &&
-        getGlobalBounds().left + getGlobalBounds().width + next_pos_x >= object->getGlobalBounds().left &&
-        !(getGlobalBounds().top >= object->getGlobalBounds().height + object->getGlobalBounds().top ||
-          getGlobalBounds().top + getGlobalBounds().height <= object->getGlobalBounds().top)) {
+    if (getCollisionBound().left + next_pos_x <= object->getGlobalBounds().left + object->getGlobalBounds().width &&
+        getCollisionBound().left + getCollisionBound().width + next_pos_x >= object->getGlobalBounds().left &&
+        !(getCollisionBound().top >= object->getGlobalBounds().height + object->getGlobalBounds().top ||
+          getCollisionBound().top + getCollisionBound().height <= object->getGlobalBounds().top)) {
         return true;
     }
     return false;
 }
+
 void Bulletenemygoblin::fired(float &time){
     if (moving_left_) {
         direction_ = -1;
@@ -148,7 +159,7 @@ void Bulletenemygoblin::del(std::vector<std::unique_ptr<Bullet>> &bullets, Playe
         if(to_delete_ == 1){
             if((player.getPosition().x > getPosx() - 50 && player.getPosition().y <= getPosy() - 30) ||
                     (player.getPosition().x < getPosx() + 50 && player.getPosition().y <= getPosy() - 30) ){//nie do konca dziala
-                player.substractHp(0);
+                player.subtractHp(0);
             }
             bullets.erase(bullet);
             break;
