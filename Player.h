@@ -222,6 +222,7 @@ void Player::step(float &time) {
         sec_staying_ = 0;
         sec_walking_ = 0;
     }
+    //std::cout << hp_ << std::endl;
 }
 
 void Player::subtractHp(int how_many){

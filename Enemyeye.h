@@ -61,7 +61,7 @@ void Enemyeye::step(float &time){
 
 void Enemyeye::shoot(std::vector<std::unique_ptr<Bullet>> &bullets){
     float x, y;
-    int los = (std::rand()%100)+ 1;
+    int los = (std::rand()%150)+ 1;
     if(los < 2){
         if (direction_ > 0) {
             x = this->getGlobalBounds().left + this->getGlobalBounds().width;

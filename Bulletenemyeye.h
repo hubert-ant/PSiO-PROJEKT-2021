@@ -63,17 +63,18 @@ void Bulletenemyeye::collision(std::vector<std::unique_ptr<Bullet>> &bullets, st
     for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
         for (auto object = objects.begin(); object < objects.end(); object++) {
             auto wall = dynamic_cast<Wall*>(object->get());
+            if ((*bullet)->getGlobalBounds().intersects(player.getGlobalBounds())){
+                bullets.erase(bullet);
+                player.subtractHp(1);
+                break;
+            }
             if ((*bullet)->getGlobalBounds().intersects((*object)->getGlobalBounds())) {
                 if (wall != nullptr) {
                     bullets.erase(bullet);
                     break;
                 }
             }
-            if ((*bullet)->getGlobalBounds().intersects(player.getGlobalBounds())){
-                bullets.erase(bullet);
-                player.subtractHp(1);
-                break;
-            }
+
         }
     }
 }

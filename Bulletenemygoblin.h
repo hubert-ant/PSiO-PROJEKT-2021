@@ -19,8 +19,6 @@ public:
     bool verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object);
     bool horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object);
     void del(std::vector<std::unique_ptr<Bullet>> &bullets, Player &player);
-    double getPosx();
-    double getPosy();
     sf::FloatRect getCollisionBound();
 protected:
     bool horizontal_collision_ = false, vertical_collision_;
@@ -39,14 +37,6 @@ Bulletenemygoblin ::Bulletenemygoblin (double x, double y, const std::string &fi
     sec_walking_ = 0;
     acceleration_ = 10;
     to_delete_ = 0;
-}
-
-double Bulletenemygoblin::getPosx(){
-    return getPosition().x;
-}
-
-double Bulletenemygoblin::getPosy(){
-    return getPosition().y;
 }
 
 void Bulletenemygoblin::mirror() {
@@ -82,27 +72,6 @@ void Bulletenemygoblin::setFrames(){
     this->addAnimationFrame(sf::IntRect(1600, 0, 100, 100), animated_walking_);
     this->addAnimationFrame(sf::IntRect(1700, 0, 100, 100), animated_walking_);
     this->addAnimationFrame(sf::IntRect(1800, 0, 100, 100), animated_walking_);
-
-//    this->addAnimationFrame(sf::IntRect(48, 42, 10, 16), animated_character_); //rzut
-//    this->addAnimationFrame(sf::IntRect(148, 42, 10, 16), animated_walking_); //lądowanie
-//    this->addAnimationFrame(sf::IntRect(248, 42, 10, 16), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(348, 42, 10, 16), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(448, 42, 10, 16), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(548, 42, 10, 16), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(648, 42, 10, 16), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(748, 42, 10, 16), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(848, 42, 10, 16), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(948, 42, 10, 16), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(1044, 44, 16, 16), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(1144, 44, 16, 16), animated_walking_);//wieksze tekstury
-//    this->addAnimationFrame(sf::IntRect(1235, 33, 35, 35), animated_walking_);//tu jest git
-//    this->addAnimationFrame(sf::IntRect(1331, 27, 35, 40), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(1430, 20, 50, 50), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(1500, 0, 100, 100), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(1600, 0, 100, 100), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(1700, 0, 100, 100), animated_walking_);
-//    this->addAnimationFrame(sf::IntRect(1800, 0, 100, 100), animated_walking_);
-
 }
 
 sf::FloatRect Bulletenemygoblin::getCollisionBound(){
@@ -157,9 +126,9 @@ void Bulletenemygoblin::fired(float &time){
 void Bulletenemygoblin::del(std::vector<std::unique_ptr<Bullet>> &bullets, Player &player){
     for (auto bullet = bullets.begin(); bullet < bullets.end(); bullet++){
         if(to_delete_ == 1){
-            if((player.getPosition().x > getPosx() - 50 && player.getPosition().y <= getPosy() - 30) ||
-                    (player.getPosition().x < getPosx() + 50 && player.getPosition().y <= getPosy() - 30) ){//nie do konca dziala
-                player.subtractHp(0);
+            double d = sqrt(pow((player.getPosition().x - (*bullet)->getPosition().x), 2) + pow((player.getPosition().y - (*bullet)->getPosition().y), 2));
+            if(d < 70){
+                player.subtractHp(2);
             }
             bullets.erase(bullet);
             break;
