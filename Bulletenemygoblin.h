@@ -6,6 +6,7 @@
 #include "AnimatedSprite.h"
 #include "Bullet.h"
 #include "Wall.h"
+#include "Player.h"
 
 class Bulletenemygoblin : public Bullet{
 public:
@@ -17,7 +18,9 @@ public:
     void collision(std::vector<std::unique_ptr<Bullet>> &bullets, std::vector<std::unique_ptr<AnimatedSprite>> &objects, Player &player, float time);
     bool verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object);
     bool horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object);
-    void del(std::vector<std::unique_ptr<Bullet>> &bullets);
+    void del(std::vector<std::unique_ptr<Bullet>> &bullets, Player &player);
+    double getPosx();
+    double getPosy();
 protected:
     bool horizontal_collision_ = false, vertical_collision_;
     double next_pos_x_, next_pos_y_, acceleration_;
@@ -37,6 +40,14 @@ Bulletenemygoblin ::Bulletenemygoblin (double x, double y, const std::string &fi
     to_delete_ = 0;
 }
 
+double Bulletenemygoblin::getPosx(){
+    return getPosition().x;
+}
+
+double Bulletenemygoblin::getPosy(){
+    return getPosition().y;
+}
+
 void Bulletenemygoblin::mirror() {
     sf::IntRect temp = animated_walking_[0];
     float origin_x = temp.width;
@@ -51,25 +62,45 @@ void Bulletenemygoblin::mirror() {
 }
 
 void Bulletenemygoblin::setFrames(){
-    this->addAnimationFrame(sf::IntRect(40, 40, 20, 20), animated_character_); //rzut
-    this->addAnimationFrame(sf::IntRect(140, 40, 20, 20), animated_walking_); //lądowanie
-    this->addAnimationFrame(sf::IntRect(240, 40, 20, 20), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(340, 40, 20, 20), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(440, 40, 20, 20), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(540, 40, 20, 20), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(640, 40, 20, 20), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(740, 40, 20, 20), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(840, 40, 20, 20), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(940, 40, 20, 20), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(1040, 40, 20, 20), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(1140, 40, 20, 20), animated_walking_);//wieksze tekstury
-    this->addAnimationFrame(sf::IntRect(1240, 20, 40, 50), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(1340, 20, 40, 50), animated_walking_);
-    this->addAnimationFrame(sf::IntRect(1430, 20, 50, 50), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(0, 0, 100, 100), animated_character_);
+    this->addAnimationFrame(sf::IntRect(100, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(200, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(300, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(400, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(500, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(600, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(700, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(800, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(900, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(1000, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(1100, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(1200, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(1300, 0, 100, 100), animated_walking_);
+    this->addAnimationFrame(sf::IntRect(1400, 0, 100, 100), animated_walking_);
     this->addAnimationFrame(sf::IntRect(1500, 0, 100, 100), animated_walking_);
     this->addAnimationFrame(sf::IntRect(1600, 0, 100, 100), animated_walking_);
     this->addAnimationFrame(sf::IntRect(1700, 0, 100, 100), animated_walking_);
     this->addAnimationFrame(sf::IntRect(1800, 0, 100, 100), animated_walking_);
+
+//    this->addAnimationFrame(sf::IntRect(48, 42, 10, 16), animated_character_); //rzut
+//    this->addAnimationFrame(sf::IntRect(148, 42, 10, 16), animated_walking_); //lądowanie
+//    this->addAnimationFrame(sf::IntRect(248, 42, 10, 16), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(348, 42, 10, 16), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(448, 42, 10, 16), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(548, 42, 10, 16), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(648, 42, 10, 16), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(748, 42, 10, 16), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(848, 42, 10, 16), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(948, 42, 10, 16), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(1044, 44, 16, 16), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(1144, 44, 16, 16), animated_walking_);//wieksze tekstury
+//    this->addAnimationFrame(sf::IntRect(1235, 33, 35, 35), animated_walking_);//tu jest git
+//    this->addAnimationFrame(sf::IntRect(1331, 27, 35, 40), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(1430, 20, 50, 50), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(1500, 0, 100, 100), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(1600, 0, 100, 100), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(1700, 0, 100, 100), animated_walking_);
+//    this->addAnimationFrame(sf::IntRect(1800, 0, 100, 100), animated_walking_);
 
 }
 
@@ -112,9 +143,13 @@ void Bulletenemygoblin::fired(float &time){
     }
 }
 
-void Bulletenemygoblin::del(std::vector<std::unique_ptr<Bullet>> &bullets){
+void Bulletenemygoblin::del(std::vector<std::unique_ptr<Bullet>> &bullets, Player &player){
     for (auto bullet = bullets.begin(); bullet < bullets.end(); bullet++){
         if(to_delete_ == 1){
+            if((player.getPosition().x > getPosx() - 50 && player.getPosition().y <= getPosy() - 30) ||
+                    (player.getPosition().x < getPosx() + 50 && player.getPosition().y <= getPosy() - 30) ){//nie do konca dziala
+                player.substractHp(0);
+            }
             bullets.erase(bullet);
             break;
         }
@@ -136,7 +171,7 @@ void Bulletenemygoblin::collision(std::vector<std::unique_ptr<Bullet>> &bullets,
         }      
     }
     fired(time);
-    del(bullets);
+    del(bullets, player);
 }
 
 void Bulletenemygoblin::step(float &time){

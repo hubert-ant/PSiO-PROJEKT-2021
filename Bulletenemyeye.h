@@ -71,7 +71,7 @@ void Bulletenemyeye::collision(std::vector<std::unique_ptr<Bullet>> &bullets, st
             }
             if ((*bullet)->getGlobalBounds().intersects(player.getGlobalBounds())){
                 bullets.erase(bullet);
-                std::cout << "AAAAAAAAAAA"; //odejmowanie hp
+                player.substractHp(1);
                 break;
             }
         }

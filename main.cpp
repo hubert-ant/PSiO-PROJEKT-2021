@@ -14,6 +14,7 @@
 #include "Player.h"
 #include "Wall.h"
 #include "Bonus.h"
+#include "HPbar.h"
 
 int main() {
 
@@ -23,6 +24,7 @@ int main() {
     std::vector<std::unique_ptr<Bullet>> bullets;
     std::vector<std::unique_ptr<Bullet>> bullets_enemy_eye;
     std::vector<std::unique_ptr<Bullet>> bullets_enemy_goblin;
+    std::vector<std::unique_ptr<Hpbar>> hp_bar;
     srand(time(NULL));
 
     //Player
@@ -35,6 +37,7 @@ int main() {
     Enemyeye::setEnemies(objects);
     Enemygoblin::setEnemies(objects);
 
+    Hpbar::createPlayerHp(hp_bar, player);
     //loop
     window.setFramerateLimit(60);
     while (window.isOpen()) {
@@ -54,6 +57,9 @@ int main() {
         player.checkCollision(objects);
         player.control(time);
         player.step(time);
+
+
+        Hpbar::substractPlayerHp(hp_bar, player);
 
             //tworzenie pociskow przeciwnikow
         for (auto object = objects.begin(); object < objects.end(); object++) {
@@ -97,6 +103,9 @@ int main() {
             window.draw(*rec);
         }
         for (auto &rec : bullets_enemy_goblin) {
+            window.draw(*rec);
+        }
+        for (auto &rec : hp_bar) {
             window.draw(*rec);
         }
         window.draw(player);

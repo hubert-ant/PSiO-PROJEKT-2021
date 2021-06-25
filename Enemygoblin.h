@@ -46,8 +46,8 @@ void Enemygoblin::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objec
     std::unique_ptr<AnimatedSprite> enemy2 = std::make_unique<Enemygoblin>(600.0, 400.0, 100.0, "goblin");
     std::unique_ptr<AnimatedSprite> enemy3 = std::make_unique<Enemygoblin>(700.0, 500.0, 100.0, "goblin");
     setObject(enemy1, objects);
-    setObject(enemy2, objects);
-    setObject(enemy3, objects);
+//    setObject(enemy2, objects);
+//    setObject(enemy3, objects);
 }
 
 void Enemygoblin::step(float &time){

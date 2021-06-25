@@ -36,30 +36,34 @@ void Enemy::movingRight(){
 }
 
 bool Enemy::moving(){
-    if(timer_ >= 0){
+    if(timer_ > 0){
         return false;
     }
+    timer_ = 0;
     return true;
 }
 
 void Enemy::control(float &time){
-    distance_x_ = direction_ * vel_x_ * time;
-    time_of_staying_ += time;
-    sum_of_distance_x += distance_x_;
-    if(time_of_staying_ >= 2){
-        timer_ = time_of_staying_;
-        time_of_staying_ = 0;
+    if(timer_ == 0){
+        time_of_staying_ += time;
     }
+    distance_x_ = direction_ * vel_x_ * time;
+    sum_of_distance_x += distance_x_;
     if(!moving()){
         time_of_staying_ = 0;
         timer_ -= time;
     }else{
+        if(time_of_staying_ >= 2){
+            timer_ = 2;
+            time_of_staying_ = 0;
+        }
         if(getPosition().x > x_ - 100 && getPosition().x < x_ + 100){
             move(distance_x_, 0);
         }else{
             direction_ = -direction_;
             move(-distance_x_, 0);
         }
+        timer_ = 0;
     }
 }
 

@@ -26,10 +26,13 @@ public:
     bool verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object);
     bool horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object);
     void checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec);
+    void substractHp(int how_many);
+    int checkHpToDelete();
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
     bool horizontal_collision_, vertical_collision_, moving_up_;
     std::vector<sf::IntRect> animated_jumping_;
+    int hp_, how_many_to_delete_;
 };
 
 Player::Player(double x, double y, double vel_x, double vel_y, const std::string &filename) {
@@ -47,6 +50,7 @@ Player::Player(double x, double y, double vel_x, double vel_y, const std::string
     sec_staying_ = 0;
     acceleration_ = 10;
     moving_up_ = false;
+    hp_ = 10;
 }
 
 void Player::movingLeft() {
@@ -219,5 +223,16 @@ void Player::step(float &time) {
         sec_walking_ = 0;
     }
 }
+
+void Player::substractHp(int how_many){
+    how_many_to_delete_ = how_many;
+    hp_ -= how_many;
+}
+
+int Player::checkHpToDelete(){
+    return how_many_to_delete_;
+}
+
+
 
 #endif // PLAYER_H
