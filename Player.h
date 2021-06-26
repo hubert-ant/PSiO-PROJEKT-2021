@@ -10,6 +10,7 @@
 
 #include "AnimatedSprite.h"
 #include "Bulletplayer.h"
+#include "Point.h"
 
 class Player : public AnimatedSprite {
 public:
@@ -30,12 +31,14 @@ public:
     int checkHp();
     void subtractHp(int how_many);
     void addHp(int how_many);
+    int checkBaseHp();
     void subtractLifes();
+    void addPoints();
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
     bool horizontal_collision_, vertical_collision_, moving_up_;
     std::vector<sf::IntRect> animated_jumping_;
-    int base_hp_, hp_, how_many_to_delete_, how_many_to_add_, lifes_, delete_life_;
+    int base_hp_, hp_, how_many_to_delete_, how_many_to_add_, lifes_, delete_life_, points_;
 };
 
 Player::Player(double x, double y, double vel_x, double vel_y, const std::string &filename) {
@@ -53,9 +56,10 @@ Player::Player(double x, double y, double vel_x, double vel_y, const std::string
     sec_staying_ = 0;
     acceleration_ = 10;
     moving_up_ = false;
-    hp_ = 10;
     base_hp_ = 10;
+    hp_ = base_hp_;
     lifes_ = 3;
+    points_ = 0;
 }
 
 void Player::movingLeft() {
@@ -73,9 +77,17 @@ void Player::checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec){
     vertical_collision_ = false;
     for (auto it = vec.begin(); it < vec.end(); it++) {
         auto enemy = dynamic_cast<Enemy*>(it->get());
+        auto point = dynamic_cast<Point*>(it->get());
         if(enemy != nullptr){
             if(this->getGlobalBounds().intersects(enemy->getGlobalBounds())){
                 subtractLifes();
+                break;
+            }
+        }else if(point != nullptr){
+            if(this->getGlobalBounds().intersects(point->getGlobalBounds())){
+                vec.erase(it);
+                addPoints();
+                break;
             }
         }else{
             if (verticalCollison(next_pos_y_, *it)) {
@@ -85,7 +97,6 @@ void Player::checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec){
                 horizontal_collision_ = true;
             }
         }
-
     }
 }
 
@@ -235,7 +246,11 @@ void Player::step(float &time) {
         sec_staying_ = 0;
         sec_walking_ = 0;
     }
-    std::cout << hp_ << std::endl;
+    std::cout << hp_ << "   " << points_ <<  std::endl;
+}
+
+int Player::checkBaseHp(){
+    return base_hp_;
 }
 
 int Player::checkHp(){
@@ -271,6 +286,10 @@ void Player::checkCollisionBonus(std::vector<std::unique_ptr<AnimatedSprite>> &b
             break;
         }
     }
+}
+
+void Player::addPoints(){
+    points_ += 1;
 }
 
 #endif // PLAYER_H

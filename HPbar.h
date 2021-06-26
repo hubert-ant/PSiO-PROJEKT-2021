@@ -27,7 +27,7 @@ Hpbar::Hpbar(double x, double y, const std::string &filename){
 }
 
 void Hpbar::createPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &player){
-    int quantity = 10;
+    int quantity = player.checkBaseHp();
     for(int i = 0; i < quantity; i++){
         double pos_x = i * 32;
         auto hp = std::make_unique<Hpbar>(0.0 + pos_x, 600.0, "heart");
@@ -36,18 +36,5 @@ void Hpbar::createPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &pla
         bar.emplace_back(std::move(hp));
     }
 }
-
-//void Hpbar::subtractPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &player){
-//    int temp = player.checkHpToDelete();
-//    for(int i = 0; i < temp; i++){
-//        if(bar.size() > 0){
-//            bar.erase(bar.end());
-//        }else{
-//            player.subtractLifes();
-//            Hpbar::createPlayerHp(bar, player);
-//        }
-//    }
-//    player.subtractHp(0);
-//}
 
 #endif // HPBAR_H

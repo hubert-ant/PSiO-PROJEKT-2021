@@ -15,6 +15,7 @@
 #include "Wall.h"
 #include "Bonus.h"
 #include "HPbar.h"
+#include "Point.h"
 
 int main() {
 
@@ -38,6 +39,7 @@ int main() {
     Enemyeye::setEnemies(objects);
     Enemygoblin::setEnemies(objects);
     Bonus::setBonuses(bonuses);
+    Point::setPoints(objects);
     Hpbar::createPlayerHp(hp_bar, player);
 
     //loop
