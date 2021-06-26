@@ -21,7 +21,7 @@ Enemyeye::Enemyeye(double x, double y, double vx, const std::string &filename) {
     frames_ = 6;
     current_frame_index_ = 0;
     sec_walking_ = 0;
-
+    timer_ = 0;
 }
 
 void Enemyeye::setFrames(){

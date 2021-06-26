@@ -41,6 +41,9 @@ void Hpbar::subtractPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &p
     for(int i = 0; i < temp; i++){
         if(bar.size() > 0){
             bar.erase(bar.end());
+        }else{
+            player.subtractLives();
+            Hpbar::createPlayerHp(bar, player);
         }
     }
     player.subtractHp(0);

@@ -39,24 +39,21 @@ bool Enemy::moving(){
     if(timer_ > 0){
         return false;
     }
-    timer_ = 0;
     return true;
 }
 
 void Enemy::control(float& time) {
-    if (timer_ == 0) {
-        time_of_staying_ += time;
-    }
+    time_of_staying_ += time;
     distance_x_ = direction_ * vel_x_ * time;
     sum_of_distance_x += distance_x_;
+    if (time_of_staying_ >= 2) {
+        timer_ = 2;
+        time_of_staying_ = 0;
+    }
     if (!moving()) {
         time_of_staying_ = 0;
         timer_ -= time;
     } else {
-        if (time_of_staying_ >= 2) {
-            timer_ = 2;
-            time_of_staying_ = 0;
-        }
         float distance_out_of_range = 0;
         if (getPosition().x <= x_ - 100) {
             distance_out_of_range = getPosition().x - float(x_ - 100);

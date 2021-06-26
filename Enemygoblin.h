@@ -25,6 +25,7 @@ Enemygoblin::Enemygoblin(double x, double y, double vx, const std::string &filen
     sec_walking_ = 0;
     sec_staying_ = 0;
     direction_ = (std::rand()%2)+ -1;
+    timer_ = 0;
 }
 
 void Enemygoblin::setFrames(){

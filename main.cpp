@@ -54,10 +54,11 @@ int main() {
         window.clear(sf::Color::Black);
 
         //LOGIC
+        //player.checkCollisionEnemy(objects);
         player.checkCollision(objects);
-        player.control(time);
-        player.step(time);
 
+        player.control(time);
+        player.step(time);        
 
         Hpbar::subtractPlayerHp(hp_bar, player);
 
