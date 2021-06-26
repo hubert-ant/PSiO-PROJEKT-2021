@@ -26,15 +26,16 @@ public:
     bool verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object);
     bool horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object);
     void checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec);
-    void checkCollisionEnemy(std::vector<std::unique_ptr<AnimatedSprite>> &vec);
+    void checkCollisionBonus(std::vector<std::unique_ptr<AnimatedSprite>> &bonuses);
+    int checkHp();
     void subtractHp(int how_many);
-    int checkHpToDelete();
-    void subtractLives();
+    void addHp(int how_many);
+    void subtractLifes();
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
     bool horizontal_collision_, vertical_collision_, moving_up_;
     std::vector<sf::IntRect> animated_jumping_;
-    int hp_, how_many_to_delete_, lives_;
+    int base_hp_, hp_, how_many_to_delete_, how_many_to_add_, lifes_, delete_life_;
 };
 
 Player::Player(double x, double y, double vel_x, double vel_y, const std::string &filename) {
@@ -53,6 +54,8 @@ Player::Player(double x, double y, double vel_x, double vel_y, const std::string
     acceleration_ = 10;
     moving_up_ = false;
     hp_ = 10;
+    base_hp_ = 10;
+    lifes_ = 3;
 }
 
 void Player::movingLeft() {
@@ -72,7 +75,7 @@ void Player::checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec){
         auto enemy = dynamic_cast<Enemy*>(it->get());
         if(enemy != nullptr){
             if(this->getGlobalBounds().intersects(enemy->getGlobalBounds())){
-                subtractLives();
+                subtractLifes();
             }
         }else{
             if (verticalCollison(next_pos_y_, *it)) {
@@ -232,28 +235,39 @@ void Player::step(float &time) {
         sec_staying_ = 0;
         sec_walking_ = 0;
     }
+    std::cout << hp_ << std::endl;
+}
+
+int Player::checkHp(){
+    if(hp_ <= 0){
+        subtractLifes();
+
+    }
+    return hp_;
 }
 
 void Player::subtractHp(int how_many){
-    how_many_to_delete_ = how_many;
     hp_ -= how_many;
 }
 
-int Player::checkHpToDelete(){
-    return how_many_to_delete_;
+void Player::addHp(int how_many){
+    if(hp_ < 10){
+        hp_ += how_many;
+    }
 }
 
-void Player::subtractLives(){
+void Player::subtractLifes(){
     setPosition(x_, y_);
     vel_y_ = 0;
-    lives_ -= 1;
+    lifes_ -= 1;
+    hp_ = base_hp_;
 }
 
-void Player::checkCollisionEnemy(std::vector<std::unique_ptr<AnimatedSprite>> &vec){
-    for(auto it = vec.begin(); it < vec.end(); it++){
-        auto enemy = dynamic_cast<Enemy*>(it->get());
-        if(enemy != nullptr){
-            subtractLives();
+void Player::checkCollisionBonus(std::vector<std::unique_ptr<AnimatedSprite>> &bonuses){
+    for(auto it = bonuses.begin(); it < bonuses.end(); it++){
+        if(this->getGlobalBounds().intersects((*it)->getGlobalBounds())){
+            addHp(1);
+            bonuses.erase(it);
             break;
         }
     }

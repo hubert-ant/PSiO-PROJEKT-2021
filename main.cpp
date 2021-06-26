@@ -21,6 +21,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(1400, 1000), "Zombie Game");
     sf::Clock clock;
     std::vector<std::unique_ptr<AnimatedSprite>> objects;
+    std::vector<std::unique_ptr<AnimatedSprite>> bonuses;
     std::vector<std::unique_ptr<Bullet>> bullets;
     std::vector<std::unique_ptr<Bullet>> bullets_enemy_eye;
     std::vector<std::unique_ptr<Bullet>> bullets_enemy_goblin;
@@ -36,8 +37,9 @@ int main() {
     Wall::setWall(objects);
     Enemyeye::setEnemies(objects);
     Enemygoblin::setEnemies(objects);
-
+    Bonus::setBonuses(bonuses);
     Hpbar::createPlayerHp(hp_bar, player);
+
     //loop
     window.setFramerateLimit(60);
     while (window.isOpen()) {
@@ -54,15 +56,14 @@ int main() {
         window.clear(sf::Color::Black);
 
         //LOGIC
-        //player.checkCollisionEnemy(objects);
         player.checkCollision(objects);
-
+        player.checkCollisionBonus(bonuses);
         player.control(time);
-        player.step(time);        
+        player.step(time);
 
-        Hpbar::subtractPlayerHp(hp_bar, player);
+        //Hpbar::subtractPlayerHp(hp_bar, player);
 
-            //tworzenie pociskow przeciwnikow
+        //tworzenie pociskow przeciwnikow
         for (auto object = objects.begin(); object < objects.end(); object++) {
             auto enemyeye = dynamic_cast<Enemyeye*>(object->get());
             auto enemygoblin = dynamic_cast<Enemygoblin*>(object->get());
@@ -75,7 +76,7 @@ int main() {
             (*object)->step(time);
             (*object)->control(time);
         }
-            //obsluga pociskow przeciwnikow
+        //obsluga pociskow przeciwnikow
         for (auto bullet_en_eye = bullets_enemy_eye.begin(); bullet_en_eye < bullets_enemy_eye.end(); ++bullet_en_eye) {
             (*bullet_en_eye)->fired(time);
             (*bullet_en_eye)->step(time);
@@ -92,7 +93,6 @@ int main() {
             (*bullet)->collision(bullets, objects, player, time);
         }
 
-
         //DRAW
         for (auto &rec : objects) {
             window.draw(*rec);
@@ -106,8 +106,11 @@ int main() {
         for (auto &rec : bullets_enemy_goblin) {
             window.draw(*rec);
         }
-        for (auto &rec : hp_bar) {
+        for (auto &rec : bonuses) {
             window.draw(*rec);
+        }
+        for (auto it = hp_bar.begin(); it < hp_bar.begin() + player.checkHp() ; it++) {
+            window.draw(**it);
         }
         window.draw(player);
 

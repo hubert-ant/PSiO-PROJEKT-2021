@@ -3,6 +3,7 @@
 
 #include "AnimatedSprite.h"
 #include "Player.h"
+#include "Bonus.h"
 
 class Hpbar : public AnimatedSprite{
 public:
@@ -36,17 +37,17 @@ void Hpbar::createPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &pla
     }
 }
 
-void Hpbar::subtractPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &player){
-    int temp = player.checkHpToDelete();
-    for(int i = 0; i < temp; i++){
-        if(bar.size() > 0){
-            bar.erase(bar.end());
-        }else{
-            player.subtractLives();
-            Hpbar::createPlayerHp(bar, player);
-        }
-    }
-    player.subtractHp(0);
-}
+//void Hpbar::subtractPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &player){
+//    int temp = player.checkHpToDelete();
+//    for(int i = 0; i < temp; i++){
+//        if(bar.size() > 0){
+//            bar.erase(bar.end());
+//        }else{
+//            player.subtractLifes();
+//            Hpbar::createPlayerHp(bar, player);
+//        }
+//    }
+//    player.subtractHp(0);
+//}
 
 #endif // HPBAR_H
