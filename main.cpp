@@ -19,7 +19,7 @@
 
 int main() {
 
-    sf::RenderWindow window(sf::VideoMode(1400, 1000), "Zombie Game");
+    sf::RenderWindow window(sf::VideoMode(1200, 980), "Zombie Game");
     sf::Clock clock;
     std::vector<std::unique_ptr<AnimatedSprite>> objects;
     std::vector<std::unique_ptr<AnimatedSprite>> bonuses;
@@ -29,15 +29,17 @@ int main() {
     std::vector<std::unique_ptr<Hpbar>> hp_bar;
     srand(time(NULL));
 
+    sf::View view( sf::Vector2f(window.getSize().x/2, window.getSize().y/2), sf::Vector2f(window.getSize().x, window.getSize().y));
+
     //Player
-    Player player(10.0, 520.0, 100.00, 0.0, "gunner");
+    Player player(10.0, 520.0, 100.0, 0.0, "gunner");
     player.setPos();
     player.setText();
 
     //Walls & enemies
     Wall::setWall(objects);
-    Enemyeye::setEnemies(objects);
-    Enemygoblin::setEnemies(objects);
+    //Enemyeye::setEnemies(objects);
+    //Enemygoblin::setEnemies(objects);
     Bonus::setBonuses(bonuses);
     Point::setPoints(objects);
     Hpbar::createPlayerHp(hp_bar, player);
@@ -56,14 +58,14 @@ int main() {
         float time = clock.getElapsedTime().asSeconds();
         clock.restart();
         window.clear(sf::Color::Black);
+        window.setView(view);
 
         //LOGIC
         player.checkCollision(objects);
         player.checkCollisionBonus(bonuses);
         player.control(time);
         player.step(time);
-
-        //Hpbar::subtractPlayerHp(hp_bar, player);
+        player.moveView(view, window);
 
         //tworzenie pociskow przeciwnikow
         for (auto object = objects.begin(); object < objects.end(); object++) {

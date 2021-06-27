@@ -34,12 +34,33 @@ public:
     int checkBaseHp();
     void subtractLifes();
     void addPoints();
+    void moveView(sf::View &view, sf::RenderWindow &window);
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
     bool horizontal_collision_, vertical_collision_, moving_up_;
     std::vector<sf::IntRect> animated_jumping_;
     int base_hp_, hp_, how_many_to_delete_, how_many_to_add_, lifes_, delete_life_, points_;
 };
+
+void Player::moveView(sf::View &view, sf::RenderWindow &window){
+    float player_x = getPosition().x;
+    float player_y = getPosition().y;
+    float window_x = window.getSize().x/2;
+    float window_y = window.getSize().y/2;
+    if(player_x > window_x && player_x < 2 * window_x){
+        if(!horizontal_collision_){
+            if(moving()){
+                view.move(next_pos_x_, 0);
+            }
+        }
+    }
+    if(player_y > window_y && player_y < 3 * window_y){
+        if(!vertical_collision_){
+            view.move(0, next_pos_y_);
+        }
+    }
+
+}
 
 Player::Player(double x, double y, double vel_x, double vel_y, const std::string &filename) {
     x_ = x;
