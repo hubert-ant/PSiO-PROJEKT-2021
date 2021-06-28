@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-
+#include <sstream>
 #include "AnimatedSprite.h"
 #include "Bulletplayer.h"
 #include "Point.h"
@@ -36,11 +36,12 @@ public:
     int checkBaseHp();
     void subtractLifes();
     void addPoints();
-    void moveView(sf::View &view, sf::RenderWindow &window, std::vector<std::unique_ptr<Hpbar>> &bar, Key &key);
+    void moveView(sf::View &view, sf::RenderWindow &window, std::vector<std::unique_ptr<Hpbar>> &bar, Key &key, sf::Text &text, Point &point);
     void collectKey(Key &key);
     bool checkKey();
     void checkCollisonDoors(sf::Event &event); //wygranie gry
     void checkLifes(); // przegranie gry
+    int checkPoints();
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
     bool horizontal_collision_, vertical_collision_, moving_up_, got_key_;
@@ -48,11 +49,14 @@ protected:
     int base_hp_, hp_, how_many_to_delete_, how_many_to_add_, lifes_, delete_life_, points_;
 };
 
-void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std::unique_ptr<Hpbar>> &bar, Key &key){
+void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std::unique_ptr<Hpbar>> &bar, Key &key, sf::Text &text, Point &point){
     float player_x = getPosition().x;
     float player_y = getPosition().y;
     float window_x = window.getSize().x/2;
     float window_y = window.getSize().y/2;
+    std::stringstream stream;
+    stream << checkPoints() - 1;
+    text.setString(stream.str());
     if(player_x > window_x && player_x < 2 * window_x){
         if(!horizontal_collision_){
             if(moving()){
@@ -61,6 +65,8 @@ void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std:
                 }
                 view.move(next_pos_x_, 0);
                 key.move(next_pos_x_, 0);
+                text.move(next_pos_x_, 0);
+                point.move(next_pos_x_, 0);
             }
         }
     }
@@ -71,6 +77,8 @@ void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std:
             }
             view.move(0, next_pos_y_);
             key.move(0, next_pos_y_);
+            text.move(0, next_pos_y_);
+            point.move(0, next_pos_y_);
         }
     }
 
@@ -282,7 +290,7 @@ void Player::step(float &time) {
         sec_staying_ = 0;
         sec_walking_ = 0;
     }
-    std::cout << getPosition().x << "   " << getPosition().y <<  std::endl;
+    std::cout << points_ <<  std::endl;
 }
 
 int Player::checkBaseHp(){
@@ -341,6 +349,10 @@ void Player::checkLifes(){
     if(lifes_ <=0){
         //przegrana
     }
+}
+
+int Player::checkPoints(){
+    return points_;
 }
 
 #endif // PLAYER_H

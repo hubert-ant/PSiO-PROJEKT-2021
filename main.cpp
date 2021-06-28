@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <vector>
+#include <sstream>
 
 #include "AnimatedSprite.h"
 #include "Bullet.h"
@@ -21,6 +22,7 @@
 
 int main() {
 
+    srand(time(NULL));
     sf::RenderWindow window(sf::VideoMode(1200, 900), "Dungeon Escape");
     sf::Clock clock;
     std::vector<std::unique_ptr<AnimatedSprite>> objects;
@@ -29,19 +31,30 @@ int main() {
     std::vector<std::unique_ptr<Bullet>> bullets_enemy_eye;
     std::vector<std::unique_ptr<Bullet>> bullets_enemy_goblin;
     std::vector<std::unique_ptr<Hpbar>> hp_bar;
-    srand(time(NULL));
+    sf::Text score;//score
+    sf::Font font;
+    font.loadFromFile("AGENCYB.ttf");
+    score.setPosition(window.getSize().x - 100, window.getSize().y - 40);
+    score.setFont(font);
+    score.setFillColor(sf::Color::Red);
+    score.setCharacterSize(32);
+
+    Point point_show(window.getSize().x - 70, window.getSize().y - 30, "point");
+    point_show.setPos();
+    point_show.setText();
 
     sf::View view( sf::Vector2f(window.getSize().x/2, window.getSize().y/2), sf::Vector2f(window.getSize().x, window.getSize().y));
-    view.zoom(3);
+    //view.zoom(3);
+
     //Player
-    Player player(30.0, 520.0, 100.0, 0.0, "gunner");
+    Player player(100.0, 520.0, 100.0, 0.0, "gunner");
     player.setPos();
     player.setText();
 
     //Walls & enemies
     Wall::setWall(objects);
-    Enemyeye::setEnemies(objects);
-    Enemygoblin::setEnemies(objects);
+//    Enemyeye::setEnemies(objects);
+//    Enemygoblin::setEnemies(objects);
     Bonus::setBonuses(bonuses);
     Point::setPoints(objects);
     Hpbar::createPlayerHp(hp_bar, player.checkBaseHp());
@@ -80,7 +93,7 @@ int main() {
         player.checkCollisionBonus(bonuses);
         player.control(time);
         player.step(time);
-        player.moveView(view, window, hp_bar, key_show);
+        player.moveView(view, window, hp_bar, key_show, score, point_show);
         player.collectKey(key_collect);
 
         //tworzenie pociskow przeciwnikow
@@ -139,6 +152,8 @@ int main() {
         }
         window.draw(doors);
         window.draw(player);
+        window.draw(score);
+        window.draw(point_show);
 
         window.display();
     }
