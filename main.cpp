@@ -16,10 +16,12 @@
 #include "Bonus.h"
 #include "HPbar.h"
 #include "Point.h"
+#include "Key.h"
+#include "Doors.h"
 
 int main() {
 
-    sf::RenderWindow window(sf::VideoMode(1200, 900), "Zombie Game");
+    sf::RenderWindow window(sf::VideoMode(1200, 900), "Dungeon Escape");
     sf::Clock clock;
     std::vector<std::unique_ptr<AnimatedSprite>> objects;
     std::vector<std::unique_ptr<AnimatedSprite>> bonuses;
@@ -38,11 +40,24 @@ int main() {
 
     //Walls & enemies
     Wall::setWall(objects);
-    //Enemyeye::setEnemies(objects);
+    Enemyeye::setEnemies(objects);
     Enemygoblin::setEnemies(objects);
     Bonus::setBonuses(bonuses);
     Point::setPoints(objects);
     Hpbar::createPlayerHp(hp_bar, player.checkBaseHp());
+
+    Key key_collect(1760, 1180, "key");
+    key_collect.setPos();
+    key_collect.setText();
+
+    Key key_show(window.getSize().x - 30, window.getSize().y - 30, "key");
+    key_show.setPos();
+    key_show.setText();
+
+    Doors doors(1750, 15, "doors");
+    doors.setPos();
+    doors.setText();
+    doors.setScale(2.0, 2.0);
 
     //loop
     window.setFramerateLimit(60);
@@ -65,7 +80,8 @@ int main() {
         player.checkCollisionBonus(bonuses);
         player.control(time);
         player.step(time);
-        player.moveView(view, window, hp_bar);
+        player.moveView(view, window, hp_bar, key_show);
+        player.collectKey(key_collect);
 
         //tworzenie pociskow przeciwnikow
         for (auto object = objects.begin(); object < objects.end(); object++) {
@@ -116,6 +132,12 @@ int main() {
         for (auto it = hp_bar.begin(); it < hp_bar.begin() + player.checkHp() ; it++) {
             window.draw(**it);
         }
+        if(!player.checkKey()){
+            window.draw(key_collect);
+        }else{
+            window.draw(key_show);
+        }
+        window.draw(doors);
         window.draw(player);
 
         window.display();

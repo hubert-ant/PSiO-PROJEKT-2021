@@ -12,6 +12,7 @@
 #include "Bulletplayer.h"
 #include "Point.h"
 #include "HPbar.h"
+#include "Key.h"
 
 class Player : public AnimatedSprite {
 public:
@@ -35,15 +36,19 @@ public:
     int checkBaseHp();
     void subtractLifes();
     void addPoints();
-    void moveView(sf::View &view, sf::RenderWindow &window, std::vector<std::unique_ptr<Hpbar>> &bar);
+    void moveView(sf::View &view, sf::RenderWindow &window, std::vector<std::unique_ptr<Hpbar>> &bar, Key &key);
+    void collectKey(Key &key);
+    bool checkKey();
+    void checkCollisonDoors(sf::Event &event); //wygranie gry
+    void checkLifes(); // przegranie gry
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
-    bool horizontal_collision_, vertical_collision_, moving_up_;
+    bool horizontal_collision_, vertical_collision_, moving_up_, got_key_;
     std::vector<sf::IntRect> animated_jumping_;
     int base_hp_, hp_, how_many_to_delete_, how_many_to_add_, lifes_, delete_life_, points_;
 };
 
-void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std::unique_ptr<Hpbar>> &bar){
+void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std::unique_ptr<Hpbar>> &bar, Key &key){
     float player_x = getPosition().x;
     float player_y = getPosition().y;
     float window_x = window.getSize().x/2;
@@ -55,6 +60,7 @@ void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std:
                     rec->move(next_pos_x_, 0);
                 }
                 view.move(next_pos_x_, 0);
+                key.move(next_pos_x_, 0);
             }
         }
     }
@@ -64,6 +70,7 @@ void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std:
                 rec->move(0, next_pos_y_);
             }
             view.move(0, next_pos_y_);
+            key.move(0, next_pos_y_);
         }
     }
 
@@ -88,6 +95,7 @@ Player::Player(double x, double y, double vel_x, double vel_y, const std::string
     hp_ = base_hp_;
     lifes_ = 3;
     points_ = 0;
+    got_key_ = false;
 }
 
 void Player::movingLeft() {
@@ -284,7 +292,6 @@ int Player::checkBaseHp(){
 int Player::checkHp(){
     if(hp_ <= 0){
         subtractLifes();
-
     }
     return hp_;
 }
@@ -318,6 +325,22 @@ void Player::checkCollisionBonus(std::vector<std::unique_ptr<AnimatedSprite>> &b
 
 void Player::addPoints(){
     points_ += 1;
+}
+
+void Player::collectKey(Key &key){
+    if(this->getGlobalBounds().intersects(key.getGlobalBounds())){
+        got_key_ = true;
+    }
+}
+
+bool Player::checkKey(){
+    return got_key_;
+}
+
+void Player::checkLifes(){
+    if(lifes_ <=0){
+        //przegrana
+    }
 }
 
 #endif // PLAYER_H

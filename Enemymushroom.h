@@ -1,0 +1,4 @@
+#ifndef ENEMYMUSHROOM_H
+#define ENEMYMUSHROOM_H
+
+#endif // ENEMYMUSHROOM_H

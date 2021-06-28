@@ -1,4 +1,0 @@
-#ifndef ENEMYSKELETON_H
-#define ENEMYSKELETON_H
-
-#endif // ENEMYSKELETON_H

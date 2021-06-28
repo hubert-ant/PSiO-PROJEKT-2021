@@ -147,6 +147,9 @@ void Wall::setWall(std::vector<std::unique_ptr<AnimatedSprite>> &objects){
     std::unique_ptr<AnimatedSprite> wall35 = std::make_unique<Wall>(900, 1070, "wall");
     wall35->setScale(6, 2);
     setObject(wall35, objects);
+    std::unique_ptr<AnimatedSprite> wall36 = std::make_unique<Wall>(1600, 920, "wall");
+    wall36->setScale(6, 2);
+    setObject(wall36, objects);
 }
 
 #endif // WALL_H
