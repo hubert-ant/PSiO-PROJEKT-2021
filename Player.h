@@ -11,6 +11,7 @@
 #include "AnimatedSprite.h"
 #include "Bulletplayer.h"
 #include "Point.h"
+#include "HPbar.h"
 
 class Player : public AnimatedSprite {
 public:
@@ -34,7 +35,7 @@ public:
     int checkBaseHp();
     void subtractLifes();
     void addPoints();
-    void moveView(sf::View &view, sf::RenderWindow &window);
+    void moveView(sf::View &view, sf::RenderWindow &window, std::vector<std::unique_ptr<Hpbar>> &bar);
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
     bool horizontal_collision_, vertical_collision_, moving_up_;
@@ -42,7 +43,7 @@ protected:
     int base_hp_, hp_, how_many_to_delete_, how_many_to_add_, lifes_, delete_life_, points_;
 };
 
-void Player::moveView(sf::View &view, sf::RenderWindow &window){
+void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std::unique_ptr<Hpbar>> &bar){
     float player_x = getPosition().x;
     float player_y = getPosition().y;
     float window_x = window.getSize().x/2;
@@ -50,12 +51,18 @@ void Player::moveView(sf::View &view, sf::RenderWindow &window){
     if(player_x > window_x && player_x < 2 * window_x){
         if(!horizontal_collision_){
             if(moving()){
+                for(auto &rec : bar){
+                    rec->move(next_pos_x_, 0);
+                }
                 view.move(next_pos_x_, 0);
             }
         }
     }
-    if(player_y > window_y && player_y < 3 * window_y){
+    if(player_y > window_y && player_y < 2 * window_y){
         if(!vertical_collision_){
+            for(auto &rec : bar){
+                rec->move(0, next_pos_y_);
+            }
             view.move(0, next_pos_y_);
         }
     }
@@ -267,7 +274,7 @@ void Player::step(float &time) {
         sec_staying_ = 0;
         sec_walking_ = 0;
     }
-    std::cout << hp_ << "   " << points_ <<  std::endl;
+    std::cout << getPosition().x << "   " << getPosition().y <<  std::endl;
 }
 
 int Player::checkBaseHp(){

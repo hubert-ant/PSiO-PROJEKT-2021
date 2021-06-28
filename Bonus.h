@@ -25,7 +25,7 @@ Bonus::Bonus(double x, double y, const std::string &filename){
 
 void Bonus::setBonuses(std::vector<std::unique_ptr<AnimatedSprite>> &bonuses){
     std::unique_ptr<AnimatedSprite> bonus1 = std::make_unique<Bonus>(200.0, 400.0, "bonus");
-    setObject(bonus1, bonuses);
+    //setObject(bonus1, bonuses);
 }
 
 #endif // BONUS_H

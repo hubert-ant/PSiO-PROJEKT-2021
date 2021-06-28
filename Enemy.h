@@ -55,9 +55,9 @@ void Enemy::control(float& time) {
         timer_ -= time;
     } else {
         float distance_out_of_range = 0;
-        if (getPosition().x <= x_ - 100) {
+        if (getPosition().x <= x_ - 80) {
             distance_out_of_range = getPosition().x - float(x_ - 100);
-        } else if (getPosition().x >= x_ + 100) {
+        } else if (getPosition().x >= x_ + 80) {
             distance_out_of_range = getPosition().x - float(x_ + 100);
         }
         if (getPosition().x > x_ - 100 && getPosition().x < x_ + 100) {

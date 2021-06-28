@@ -25,6 +25,6 @@ Point::Point(double x, double y, const std::string &filename){
 
 void Point::setPoints(std::vector<std::unique_ptr<AnimatedSprite>> &objects){
     std::unique_ptr<AnimatedSprite> point1 = std::make_unique<Point>(700.0, 300.0, "point");
-    setObject(point1, objects);
+    //setObject(point1, objects);
 }
 #endif // POINT_H

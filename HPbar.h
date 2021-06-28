@@ -16,8 +16,7 @@ public:
     virtual void control(float &time) {}
     virtual void shoot(std::vector<std::unique_ptr<Bullet>> &bullets) {}
     Hpbar(double x, double y, const std::string &filename);
-    static void createPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar,  Player &player);
-    static void subtractPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar,  Player &player);
+    static void createPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, int quantity);
 };
 
 Hpbar::Hpbar(double x, double y, const std::string &filename){
@@ -26,11 +25,10 @@ Hpbar::Hpbar(double x, double y, const std::string &filename){
     filename_ = filename;
 }
 
-void Hpbar::createPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, Player &player){
-    int quantity = player.checkBaseHp();
+void Hpbar::createPlayerHp(std::vector<std::unique_ptr<Hpbar>> &bar, int quantity){
     for(int i = 0; i < quantity; i++){
         double pos_x = i * 32;
-        auto hp = std::make_unique<Hpbar>(0.0 + pos_x, 600.0, "heart");
+        auto hp = std::make_unique<Hpbar>(0.0 + pos_x, 860.0, "heart");
         hp -> setPos();
         hp -> setText();
         bar.emplace_back(std::move(hp));

@@ -43,12 +43,32 @@ void Enemygoblin::setFrames(){
     this->addAnimationFrame(sf::IntRect(1705, 50, 40, 50), animated_character_);
 }
 void Enemygoblin::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects){
-    std::unique_ptr<AnimatedSprite> enemy1 = std::make_unique<Enemygoblin>(500.0, 200.0, 100.0, "goblin");
-    std::unique_ptr<AnimatedSprite> enemy2 = std::make_unique<Enemygoblin>(600.0, 400.0, 100.0, "goblin");
-    std::unique_ptr<AnimatedSprite> enemy3 = std::make_unique<Enemygoblin>(700.0, 500.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy1 = std::make_unique<Enemygoblin>(435.0, 525.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy2 = std::make_unique<Enemygoblin>(235.0, 355.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy3 = std::make_unique<Enemygoblin>(120.0, 75.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy4 = std::make_unique<Enemygoblin>(888.0, 155.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy5 = std::make_unique<Enemygoblin>(1290.0, 54.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy6 = std::make_unique<Enemygoblin>(802.0, 404.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy7 = std::make_unique<Enemygoblin>(450.0, 824.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy8 = std::make_unique<Enemygoblin>(768.0, 725.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy9 = std::make_unique<Enemygoblin>(886.0, 879.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy10 = std::make_unique<Enemygoblin>(1296.0, 980.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy11 = std::make_unique<Enemygoblin>(1192.0, 1194.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy12 = std::make_unique<Enemygoblin>(665.0, 1194.0, 100.0, "goblin");
+    std::unique_ptr<AnimatedSprite> enemy13 = std::make_unique<Enemygoblin>(1219.0, 614.0, 100.0, "goblin");
     setObject(enemy1, objects);
-//    setObject(enemy2, objects);
-//    setObject(enemy3, objects);
+    setObject(enemy2, objects);
+    setObject(enemy3, objects);
+    setObject(enemy4, objects);
+    setObject(enemy5, objects);
+    setObject(enemy6, objects);
+    setObject(enemy7, objects);
+    setObject(enemy8, objects);
+    setObject(enemy9, objects);
+    setObject(enemy10, objects);
+    setObject(enemy11, objects);
+    setObject(enemy12, objects);
+    setObject(enemy13, objects);
 }
 
 void Enemygoblin::step(float &time){
