@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <sstream>
+#include <fstream>
 
 #include "AnimatedSprite.h"
 #include "Bullet.h"
@@ -55,11 +56,11 @@ int main() {
 
     //Walls & enemies
     Wall::setWall(objects);
-    Enemyeye::setEnemies(objects);
-    Enemygoblin::setEnemies(objects);
-    Enemymushroom::setEnemies(objects);
-    Bonus::setBonuses(bonuses);
-    Point::setPoints(points);
+    Enemyeye::setEnemies(objects, "eye.txt");
+    Enemygoblin::setEnemies(objects, "goblin.txt");
+    Enemymushroom::setEnemies(objects, "mushrooms.txt");
+    Bonus::setBonuses(bonuses, "bonuses.txt");
+    Point::setPoints(points, "points.txt");
     Hpbar::createPlayerHp(hp_bar, player.checkBaseHp());
 
     Key key_collect(1760, 1180, "key");
@@ -93,10 +94,11 @@ int main() {
 
         //LOGIC
         player.checkCollision(objects);
+        player.control(time);
         player.collisionEnemy(objects);
         player.checkCollisionBonus(bonuses);
         player.collectPoints(points);
-        player.control(time);
+
         player.step(time);
         player.moveView(view, window, hp_bar, key_show, score, point_show);
         player.collectKey(key_collect);

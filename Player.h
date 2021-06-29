@@ -57,6 +57,16 @@ void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std:
     float player_y = getPosition().y;
     float window_x = window.getSize().x/2;
     float window_y = window.getSize().y/2;
+    if(fabs(this->getPosition().x - x_) < 20 && fabs(this->getPosition().y - y_) < 20){
+        view.setCenter(window_x, window_y);
+        key.setPosition(window.getSize().x - 30, window.getSize().y - 30);
+        text.setPosition(window.getSize().x - 100, window.getSize().y - 40);
+        point.setPosition(window.getSize().x - 70, window.getSize().y - 30);
+        for(int i = 0; i < bar.size(); i++){
+            double pos_x = i * 32;
+            bar[i]->setPosition(0.0 + pos_x, 860.0);
+        }
+    }
     std::stringstream stream;
     stream << checkPoints() - 1;
     text.setString(stream.str());
@@ -132,7 +142,6 @@ void Player::checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec){
                 horizontal_collision_ = true;
             }
         }
-
     }
 }
 
@@ -202,8 +211,8 @@ bool Player::verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSp
 bool Player::horizontalCollison(float next_pos_x, const std::unique_ptr<AnimatedSprite> &object) {
     if (getGlobalBounds().left + next_pos_x <= object->getGlobalBounds().left + object->getGlobalBounds().width &&
         getGlobalBounds().left + getGlobalBounds().width + next_pos_x >= object->getGlobalBounds().left &&
-        !(getGlobalBounds().top >= object->getGlobalBounds().height + object->getGlobalBounds().top ||
-          getGlobalBounds().top + getGlobalBounds().height <= object->getGlobalBounds().top)) {
+        !(getGlobalBounds().top >= object->getGlobalBounds().height + object->getGlobalBounds().top - 1 ||
+          getGlobalBounds().top + getGlobalBounds().height <= object->getGlobalBounds().top + 1)) {
         return true;
     }
     return false;
@@ -304,7 +313,7 @@ void Player::step(float &time) {
         sec_staying_ = 0;
         sec_walking_ = 0;
     }
-    std::cout << getPosition().x << "   " << getPosition().y <<  std::endl;
+    //std::cout << getPosition().x << "   " << getPosition().y <<  std::endl;
 }
 
 int Player::checkBaseHp(){

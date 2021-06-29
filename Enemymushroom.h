@@ -1,6 +1,8 @@
 #ifndef ENEMYMUSHROOM_H
 #define ENEMYMUSHROOM_H
 
+#include <fstream>
+
 #include "Enemy.h"
 #include "Player.h"
 #include "Key.h"
@@ -9,7 +11,7 @@ class Enemymushroom : public Enemy{
 public:
     Enemymushroom(double x, double y, double vx, const std::string &filename);
     void setFrames();
-    static void setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects);
+    static void setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects, const std::string &filename);
     void step(float &time);
     void shoot( std::vector<std::unique_ptr<Bullet>> &bullets) {}
     void checkKeyCollected(Key &key);
@@ -51,17 +53,26 @@ void Enemymushroom::setFrames(){
     this->addAnimationFrame(sf::IntRect(1564, 64, 22, 37), animated_character_);
     this->addAnimationFrame(sf::IntRect(1714, 64, 22, 37), animated_character_);
 }
-void Enemymushroom::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects){
-    std::unique_ptr<AnimatedSprite> enemy1 = std::make_unique<Enemymushroom>(40.0, 930.0, 100.0, "mushroom");
-    std::unique_ptr<AnimatedSprite> enemy2 = std::make_unique<Enemymushroom>(76.0, 1070.0, 100.0, "mushroom");
-    std::unique_ptr<AnimatedSprite> enemy3 = std::make_unique<Enemymushroom>(70.0, 1200.0, 100.0, "mushroom");
-    std::unique_ptr<AnimatedSprite> enemy4 = std::make_unique<Enemymushroom>(400.0, 1080.0, 100.0, "mushroom");
-    std::unique_ptr<AnimatedSprite> enemy5 = std::make_unique<Enemymushroom>(550.0, 1200.0, 100.0, "mushroom");
-    setObject(enemy1, objects);
-    setObject(enemy2, objects);
-    setObject(enemy3, objects);
-    setObject(enemy4, objects);
-    setObject(enemy5, objects);
+void Enemymushroom::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects, const std::string &filename){
+    std::fstream input(filename);
+    if(input.good()){
+        for(std::string line; getline(input, line);){
+            if(line[0] != '$'){
+                float x, y, vel_x;
+                std::string name;
+                std::stringstream stream(line);
+                stream >> x;
+                stream >> y;
+                stream >> vel_x;
+                stream >> name;
+                std::unique_ptr<AnimatedSprite> enemy = std::make_unique<Enemymushroom>(x, y, vel_x, name);
+                setObject(enemy, objects);
+            }
+        }
+        input.close();
+    }else{
+        std::cout << "ERROR READING MUSHROOMS FILE" << std::endl;
+    }
 }
 
 void Enemymushroom::checkKeyCollected(Key &key){
