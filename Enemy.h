@@ -8,6 +8,7 @@
 
 
 class Bullet;
+class Player;
 
 class Enemy : public AnimatedSprite  {
 public:

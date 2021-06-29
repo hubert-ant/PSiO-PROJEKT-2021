@@ -12,6 +12,7 @@
 #include "Enemy.h"
 #include "Enemyeye.h"
 #include "Enemygoblin.h"
+#include "Enemymushroom.h"
 #include "Player.h"
 #include "Wall.h"
 #include "Bonus.h"
@@ -27,6 +28,7 @@ int main() {
     sf::Clock clock;
     std::vector<std::unique_ptr<AnimatedSprite>> objects;
     std::vector<std::unique_ptr<AnimatedSprite>> bonuses;
+    std::vector<std::unique_ptr<AnimatedSprite>> points;
     std::vector<std::unique_ptr<Bullet>> bullets;
     std::vector<std::unique_ptr<Bullet>> bullets_enemy_eye;
     std::vector<std::unique_ptr<Bullet>> bullets_enemy_goblin;
@@ -44,10 +46,10 @@ int main() {
     point_show.setText();
 
     sf::View view( sf::Vector2f(window.getSize().x/2, window.getSize().y/2), sf::Vector2f(window.getSize().x, window.getSize().y));
-    //view.zoom(3);
+    view.zoom(3);
 
     //Player
-    Player player(100.0, 520.0, 100.0, 0.0, "gunner");
+    Player player(30.0, 520.0, 100.0, 0.0, "gunner");
     player.setPos();
     player.setText();
 
@@ -55,11 +57,12 @@ int main() {
     Wall::setWall(objects);
 //    Enemyeye::setEnemies(objects);
 //    Enemygoblin::setEnemies(objects);
+    Enemymushroom::setEnemies(objects);
     Bonus::setBonuses(bonuses);
-    Point::setPoints(objects);
+    Point::setPoints(points);
     Hpbar::createPlayerHp(hp_bar, player.checkBaseHp());
 
-    Key key_collect(1760, 1180, "key");
+    Key key_collect(160, 580, "key");
     key_collect.setPos();
     key_collect.setText();
 
@@ -90,7 +93,9 @@ int main() {
 
         //LOGIC
         player.checkCollision(objects);
+        player.collisionEnemy(objects);
         player.checkCollisionBonus(bonuses);
+        player.collectPoints(points);
         player.control(time);
         player.step(time);
         player.moveView(view, window, hp_bar, key_show, score, point_show);
@@ -100,6 +105,7 @@ int main() {
         for (auto object = objects.begin(); object < objects.end(); object++) {
             auto enemyeye = dynamic_cast<Enemyeye*>(object->get());
             auto enemygoblin = dynamic_cast<Enemygoblin*>(object->get());
+            auto enemymushroom = dynamic_cast<Enemymushroom*>(object->get());
             if (enemyeye != nullptr) {
                 (*object)->shoot(bullets_enemy_eye);
             }
@@ -107,7 +113,13 @@ int main() {
                 (*object)->shoot(bullets_enemy_goblin);
             }
             (*object)->step(time);
-            (*object)->control(time);
+            if(enemymushroom != nullptr){
+                 enemymushroom -> checkKeyCollected(key_collect);
+                 enemymushroom -> chasingPlayer(player, time);
+            }else{
+                (*object)->control(time);
+            }
+
         }
         //obsluga pociskow przeciwnikow
         for (auto bullet_en_eye = bullets_enemy_eye.begin(); bullet_en_eye < bullets_enemy_eye.end(); ++bullet_en_eye) {
@@ -140,6 +152,9 @@ int main() {
             window.draw(*rec);
         }
         for (auto &rec : bonuses) {
+            window.draw(*rec);
+        }
+        for (auto &rec : points) {
             window.draw(*rec);
         }
         for (auto it = hp_bar.begin(); it < hp_bar.begin() + player.checkHp() ; it++) {
