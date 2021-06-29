@@ -58,17 +58,17 @@ void Enemygoblin::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objec
     std::unique_ptr<AnimatedSprite> enemy13 = std::make_unique<Enemygoblin>(1219.0, 614.0, 100.0, "goblin");
     setObject(enemy1, objects);
     setObject(enemy2, objects);
-    setObject(enemy3, objects);
-    setObject(enemy4, objects);
-    setObject(enemy5, objects);
-    setObject(enemy6, objects);
-    setObject(enemy7, objects);
-    setObject(enemy8, objects);
-    setObject(enemy9, objects);
-    setObject(enemy10, objects);
-    setObject(enemy11, objects);
-    setObject(enemy12, objects);
-    setObject(enemy13, objects);
+//    setObject(enemy3, objects);
+//    setObject(enemy4, objects);
+//    setObject(enemy5, objects);
+//    setObject(enemy6, objects);
+//    setObject(enemy7, objects);
+//    setObject(enemy8, objects);
+//    setObject(enemy9, objects);
+//    setObject(enemy10, objects);
+//    setObject(enemy11, objects);
+//    setObject(enemy12, objects);
+//    setObject(enemy13, objects);
 }
 
 void Enemygoblin::step(float &time){

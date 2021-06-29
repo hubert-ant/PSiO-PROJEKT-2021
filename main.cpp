@@ -55,14 +55,14 @@ int main() {
 
     //Walls & enemies
     Wall::setWall(objects);
-//    Enemyeye::setEnemies(objects);
-//    Enemygoblin::setEnemies(objects);
+    Enemyeye::setEnemies(objects);
+    Enemygoblin::setEnemies(objects);
     Enemymushroom::setEnemies(objects);
     Bonus::setBonuses(bonuses);
     Point::setPoints(points);
     Hpbar::createPlayerHp(hp_bar, player.checkBaseHp());
 
-    Key key_collect(160, 580, "key");
+    Key key_collect(1760, 1180, "key");
     key_collect.setPos();
     key_collect.setText();
 
@@ -115,6 +115,7 @@ int main() {
             (*object)->step(time);
             if(enemymushroom != nullptr){
                  enemymushroom -> checkKeyCollected(key_collect);
+                 enemymushroom -> checkCollision(objects);
                  enemymushroom -> chasingPlayer(player, time);
             }else{
                 (*object)->control(time);

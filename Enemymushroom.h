@@ -4,7 +4,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "Key.h"
-
+#include "Wall.h"
 class Enemymushroom : public Enemy{
 public:
     Enemymushroom(double x, double y, double vx, const std::string &filename);
@@ -14,9 +14,11 @@ public:
     void shoot( std::vector<std::unique_ptr<Bullet>> &bullets) {}
     void checkKeyCollected(Key &key);
     void chasingPlayer(Player &player, float &time);
+    bool verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object);
+    void checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec);
 protected:
-    bool move_ = false, horizontal_collision_ = false, vertical_collision_ = false;
-    float next_pos_x_, next_pos_y_, acceleration_;
+    bool move_ = false, vertical_collision_ = false;
+    float next_pos_x_mushroom_, next_pos_y_mushroom_, acceleration_;
 };
 
 Enemymushroom::Enemymushroom(double x, double y, double vx, const std::string &filename) {
@@ -50,11 +52,11 @@ void Enemymushroom::setFrames(){
     this->addAnimationFrame(sf::IntRect(1714, 64, 22, 37), animated_character_);
 }
 void Enemymushroom::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects){
-    std::unique_ptr<AnimatedSprite> enemy1 = std::make_unique<Enemymushroom>(435.0, 525.0, 100.0, "mushroom");
-    std::unique_ptr<AnimatedSprite> enemy2 = std::make_unique<Enemymushroom>(235.0, 355.0, 100.0, "mushroom");
-    std::unique_ptr<AnimatedSprite> enemy3 = std::make_unique<Enemymushroom>(120.0, 75.0, 100.0, "mushroom");
-    std::unique_ptr<AnimatedSprite> enemy4 = std::make_unique<Enemymushroom>(888.0, 155.0, 100.0, "mushroom");
-    std::unique_ptr<AnimatedSprite> enemy5 = std::make_unique<Enemymushroom>(1290.0, 54.0, 100.0, "mushroom");
+    std::unique_ptr<AnimatedSprite> enemy1 = std::make_unique<Enemymushroom>(40.0, 930.0, 100.0, "mushroom");
+    std::unique_ptr<AnimatedSprite> enemy2 = std::make_unique<Enemymushroom>(76.0, 1070.0, 100.0, "mushroom");
+    std::unique_ptr<AnimatedSprite> enemy3 = std::make_unique<Enemymushroom>(70.0, 1200.0, 100.0, "mushroom");
+    std::unique_ptr<AnimatedSprite> enemy4 = std::make_unique<Enemymushroom>(400.0, 1080.0, 100.0, "mushroom");
+    std::unique_ptr<AnimatedSprite> enemy5 = std::make_unique<Enemymushroom>(550.0, 1200.0, 100.0, "mushroom");
     setObject(enemy1, objects);
     setObject(enemy2, objects);
     setObject(enemy3, objects);
@@ -68,6 +70,28 @@ void Enemymushroom::checkKeyCollected(Key &key){
     }
 }
 
+bool Enemymushroom::verticalCollison(float next_pos_y, const std::unique_ptr<AnimatedSprite> &object) {
+    if (getGlobalBounds().top + getGlobalBounds().height + next_pos_y >= object->getGlobalBounds().top &&
+        getGlobalBounds().top + next_pos_y <= object->getGlobalBounds().top + object->getGlobalBounds().height &&
+        !(getGlobalBounds().left >= object->getGlobalBounds().left + object->getGlobalBounds().width ||
+          getGlobalBounds().left + getGlobalBounds().width <= object->getGlobalBounds().left)) {
+        return true;
+    }
+    return false;
+}
+
+void Enemymushroom::checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec){//??
+    vertical_collision_ = false;
+    for (auto it = vec.begin(); it < vec.end(); it++) {
+        auto wall = dynamic_cast<Wall*>(it->get());
+        if(wall != nullptr){
+            if (verticalCollison(next_pos_y_mushroom_, *it)) {
+                vertical_collision_ = true;
+            }
+        }
+    }
+}
+
 void Enemymushroom::chasingPlayer(Player &player, float &time){
     if(move_){
         if(player.getPosition().x > this -> getPosition().x){
@@ -75,9 +99,19 @@ void Enemymushroom::chasingPlayer(Player &player, float &time){
         }else{
             direction_ = -1;
         }
-        next_pos_x_ = direction_ * vel_x_ * time;
-        if(this->getPosition().x > 0 && this->getPosition().x < 1800){
-            move(next_pos_x_, 0);
+        vel_y_ += acceleration_ * time * 100;
+        next_pos_y_mushroom_ = vel_y_ * time;
+        next_pos_x_mushroom_ = direction_ * vel_x_ * time;
+        if((fabs(player.getPosition().x - this->getPosition().x) > 0) || (fabs(player.getPosition().y - this->getPosition().y) > 0) ){
+            if(this->getPosition().x > 0 && this->getPosition().x < 1800){
+                move(next_pos_x_mushroom_, 0);
+            }
+        }
+
+        if(!vertical_collision_){
+            move(0, next_pos_y_mushroom_);
+        }else{
+            vel_y_ = 0;
         }
     }
 }

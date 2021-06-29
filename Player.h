@@ -13,6 +13,7 @@
 #include "Point.h"
 #include "HPbar.h"
 #include "Key.h"
+#include "Wall.h"
 
 class Player : public AnimatedSprite {
 public:
@@ -57,7 +58,7 @@ void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std:
     float window_x = window.getSize().x/2;
     float window_y = window.getSize().y/2;
     std::stringstream stream;
-    stream << checkPoints();
+    stream << checkPoints() - 1;
     text.setString(stream.str());
     if(player_x > window_x && player_x < 2 * window_x){
         if(!horizontal_collision_){
@@ -122,12 +123,16 @@ void Player::checkCollision(std::vector<std::unique_ptr<AnimatedSprite>> &vec){
     horizontal_collision_ = false;
     vertical_collision_ = false;
     for (auto it = vec.begin(); it < vec.end(); it++) {
-        if (verticalCollison(next_pos_y_, *it)) {
-            vertical_collision_ = true;
+        auto wall = dynamic_cast<Wall*>(it->get());
+        if(wall != nullptr){
+            if (verticalCollison(next_pos_y_, *it)) {
+                vertical_collision_ = true;
+            }
+            if (horizontalCollison(next_pos_x_, *it)) {
+                horizontal_collision_ = true;
+            }
         }
-        if (horizontalCollison(next_pos_x_, *it)) {
-            horizontal_collision_ = true;
-        }
+
     }
 }
 
@@ -299,7 +304,7 @@ void Player::step(float &time) {
         sec_staying_ = 0;
         sec_walking_ = 0;
     }
-    //std::cout << points_ <<  std::endl;
+    std::cout << getPosition().x << "   " << getPosition().y <<  std::endl;
 }
 
 int Player::checkBaseHp(){

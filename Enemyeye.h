@@ -53,19 +53,19 @@ void Enemyeye::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects)
     std::unique_ptr<AnimatedSprite> enemy15 = std::make_unique<Enemyeye>(1050.0, 900.0, 100.0, "Eye");
     setObject(enemy1, objects);
     setObject(enemy2, objects);
-    setObject(enemy3, objects);
-    setObject(enemy4, objects);
-    setObject(enemy5, objects);
-    setObject(enemy6, objects);
-    setObject(enemy7, objects);
-    setObject(enemy8, objects);
-    setObject(enemy9, objects);
-    setObject(enemy10, objects);
-    setObject(enemy11, objects);
-    setObject(enemy12, objects);
-    setObject(enemy13, objects);
-    setObject(enemy14, objects);
-    setObject(enemy15, objects);
+//    setObject(enemy3, objects);
+//    setObject(enemy4, objects);
+//    setObject(enemy5, objects);
+//    setObject(enemy6, objects);
+//    setObject(enemy7, objects);
+//    setObject(enemy8, objects);
+//    setObject(enemy9, objects);
+//    setObject(enemy10, objects);
+//    setObject(enemy11, objects);
+//    setObject(enemy12, objects);
+//    setObject(enemy13, objects);
+//    setObject(enemy14, objects);
+//    setObject(enemy15, objects);
 }
 
 void Enemyeye::step(float &time){
