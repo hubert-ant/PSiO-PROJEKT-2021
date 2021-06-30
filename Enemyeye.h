@@ -22,6 +22,7 @@ Enemyeye::Enemyeye(double x, double y, double vx, const std::string &filename) {
     current_frame_index_ = 0;
     sec_walking_ = 0;
     timer_ = 0;
+    setFrames();
 }
 
 void Enemyeye::setFrames(){
@@ -48,6 +49,7 @@ void Enemyeye::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects,
                 stream >> vel_x;
                 stream >> name;
                 std::unique_ptr<AnimatedSprite> enemy = std::make_unique<Enemyeye>(x, y, vel_x, name);
+                enemy->setTextureRect(sf::IntRect(1105, 50, 40, 40));
                 setObject(enemy, objects);
             }
         }
@@ -59,7 +61,6 @@ void Enemyeye::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objects,
 
 void Enemyeye::step(float &time){
     sec_walking_ += time;
-    setFrames();
     mirror();
     if (sec_walking_ >= 1.0 / frames_) {
         setTextureRect(animated_walking_[current_frame_index_]);

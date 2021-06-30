@@ -37,6 +37,7 @@ Enemymushroom::Enemymushroom(double x, double y, double vx, const std::string &f
     direction_ = (std::rand()%2)+ -1;
     timer_ = 0;
     acceleration_ = 9;
+    setFrames();
 }
 
 void Enemymushroom::setFrames(){
@@ -128,7 +129,6 @@ void Enemymushroom::chasingPlayer(Player &player, float &time){
 }
 
 void Enemymushroom::step(float &time){
-    setFrames();
     mirror();
     if (!move_) {
         if (sec_staying_ == 0) {

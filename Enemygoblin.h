@@ -26,6 +26,7 @@ Enemygoblin::Enemygoblin(double x, double y, double vx, const std::string &filen
     sec_staying_ = 0;
     direction_ = (std::rand()%2)+ -1;
     timer_ = 0;
+    setFrames();
 }
 
 void Enemygoblin::setFrames(){
@@ -55,6 +56,7 @@ void Enemygoblin::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objec
                 stream >> vel_x;
                 stream >> name;
                 std::unique_ptr<AnimatedSprite> enemy = std::make_unique<Enemygoblin>(x, y, vel_x, name);
+                enemy->setTextureRect(sf::IntRect(1705, 50, 40, 50));
                 setObject(enemy, objects);
             }
         }
@@ -65,7 +67,6 @@ void Enemygoblin::setEnemies(std::vector<std::unique_ptr<AnimatedSprite>> &objec
 }
 
 void Enemygoblin::step(float &time){
-    setFrames();
     mirror();
     if (!moving()) {
         if (sec_staying_ == 0) {

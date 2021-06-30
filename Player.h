@@ -43,7 +43,7 @@ public:
     void collectKey(Key &key);
     bool checkKey();
     void checkCollisonDoors(sf::Event &event); //wygranie gry
-    void checkLifes(); // przegranie gry
+    bool checkLifes(); // przegranie gry
     int checkPoints();
 protected:
     double acceleration_, distance_jump_, next_pos_x_, next_pos_y_;
@@ -68,7 +68,7 @@ void Player::moveView(sf::View &view, sf::RenderWindow &window, std::vector<std:
         }
     }
     std::stringstream stream;
-    stream << checkPoints() - 1;
+    stream << checkPoints();
     text.setString(stream.str());
     if(player_x > window_x && player_x < 2 * window_x){
         if(!horizontal_collision_){
@@ -117,6 +117,7 @@ Player::Player(double x, double y, double vel_x, double vel_y, const std::string
     lifes_ = 3;
     points_ = 0;
     got_key_ = false;
+    setFrames();
 }
 
 void Player::movingLeft() {
@@ -276,7 +277,7 @@ bool Player::moving() {
 }
 
 void Player::step(float &time) {
-    setFrames();
+
     mirror();
     if(vertical_collision_){
         if (!moving()) {
@@ -313,7 +314,7 @@ void Player::step(float &time) {
         sec_staying_ = 0;
         sec_walking_ = 0;
     }
-    //std::cout << getPosition().x << "   " << getPosition().y <<  std::endl;
+    std::cout << lifes_ <<  std::endl;
 }
 
 int Player::checkBaseHp(){
@@ -369,10 +370,11 @@ bool Player::checkKey(){
     return got_key_;
 }
 
-void Player::checkLifes(){
+bool Player::checkLifes(){
     if(lifes_ <=0){
-        //przegrana
+        return true;
     }
+    return false;
 }
 
 int Player::checkPoints(){
