@@ -38,11 +38,18 @@ int main() {
     score.setCharacterSize(32);
 
     sf::Text game_over;//game over text
-    game_over.setString("Koniec gry. Nacisnij R aby powtorzyc");
+    game_over.setString("PRZEGRANA. Nacisnij R aby sprobowac jeszcze raz.\n\n Zdobyte punkty:");
     game_over.setFont(font);
     game_over.setCharacterSize(32);
-    game_over.setPosition(400, window.getSize().y / 2 + 16);
+    game_over.setPosition(350, window.getSize().y / 3);
     game_over.setFillColor(sf::Color::Red);
+
+    sf::Text win;//won game text
+    win.setString("WYGRANA, GRATULACJE. To byla niesamowita przygoda!\n\n Zdobyte punkty:");
+    win.setFont(font);
+    win.setCharacterSize(32);
+    win.setPosition(900, window.getSize().y / 3);
+    win.setFillColor(sf::Color::Red);
 
     sf::Texture background_texture; //background
     background_texture.loadFromFile("background.png");
@@ -55,8 +62,7 @@ int main() {
     point_show.setPos();
     point_show.setText();
 
-    sf::View view(sf::Vector2f(window.getSize().x / 2, window.getSize().y / 2),
-                  sf::Vector2f(window.getSize().x, window.getSize().y));
+    sf::View view(sf::Vector2f(window.getSize().x / 2, window.getSize().y / 2), sf::Vector2f(window.getSize().x, window.getSize().y));
     //view.zoom(3);
 
     //Player
@@ -153,7 +159,7 @@ int main() {
         }
 
         //DRAW
-        if (!player.checkLifes()) {
+        if (!player.checkLifes() && (!player.checkCollisonDoors(doors) || !player.checkKey())) {
             window.draw(sprite_background);
             for (auto& rec : objects) {
                 window.draw(*rec);
@@ -185,14 +191,26 @@ int main() {
             window.draw(player);
             window.draw(score);
             window.draw(point_show);
-        } else {
+        }else if(player.checkCollisonDoors(doors) && player.checkKey()){
+            score.setPosition(1150, window.getSize().y/3 + 80);
+            point_show.setPosition(1100, window.getSize().y/3 + 90);
+            window.draw(win);
+            window.draw(score);
+            window.draw(point_show);
+        }else {
+            score.setPosition(590, window.getSize().y/3 + 80);
+            point_show.setPosition(550, window.getSize().y/3 + 90);
+            window.draw(game_over);
+            window.draw(score);
+            window.draw(point_show);
             sf::Event eventEndGame;
             while (window.pollEvent(eventEndGame)) {
-                if (eventEndGame.type == sf::Event::KeyPressed)
-                    if (eventEndGame.key.code == sf::Keyboard::R)
+                if (eventEndGame.type == sf::Event::KeyPressed){
+                    if (eventEndGame.key.code == sf::Keyboard::R){
                         window.close();
+                    }
+                }
             }
-            window.draw(game_over);
         }
 
         window.display();
